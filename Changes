@@ -28,3 +28,6 @@ Revision history for Perl extension Cstools.
 	Cz::Cstocs version is 3.07. Program cstocs now does the #!
 	substitution when installed using make.
 
+0.06 Tue Jul 15 10:32:11 MET DST 1997
+	Little changes in the documentation.
+
