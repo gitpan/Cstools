@@ -1,13 +1,13 @@
 
 =head1 NAME
 
-Cssort - Czech sort
+Cz::Sort - Czech sort
 
 =head1 SYNOPSIS
 
-	use Cssort;
-	my $result = cscmp("_x j&á", "_&p");
-	my @sorted = cssort qw(plachta plaòka Plánièka plánièka plánì);
+	use Cz::Sort;
+	my $result = czcmp("_x j&á", "_&p");
+	my @sorted = czsort qw(plachta plaòka Plánièka plánièka plánì);
 	print "@sorted\n";
 
 =head1 DESCRIPTION
@@ -16,34 +16,34 @@ Implements czech sorting conventions, indepentent on current locales
 in effect, which are often bad. Does the four-pass sort. The idea and
 the base of the conversion table comes from Petr Olsak's program B<csr>.
 
-The basic function provided by this module, is I<cscmp>. If compares
+The basic function provided by this module, is I<czcmp>. If compares
 two scalars and returns the (-1, 0, 1) result. The function can be
 called directly, like
 
-	my $result = cscmp("_x j&á", "_&p");
+	my $result = czcmp("_x j&á", "_&p");
 
 But for convenience and also because of compatibility with older
-versions, there is a function I<cssort>. It works on list of strings
+versions, there is a function I<czsort>. It works on list of strings
 and returns that list, hmm, sorted. The function is defined simply
 like
 
-	sub cssort
-		{ sort { cscmp($a, $b); } @_; }
+	sub czsort
+		{ sort { czcmp($a, $b); } @_; }
 
 standard use of user's function in I<sort>. Hashes would be simply
 sorted
 
-	@sorted = sort { cscmp($hash{$a}, $hash{$b}) }
+	@sorted = sort { czcmp($hash{$a}, $hash{$b}) }
 						keys %hash;
 
 
-Both I<cscmp> and I<cssort> are exported into caller's namespace
+Both I<czcmp> and I<czsort> are exported into caller's namespace
 by default.
 
 This module comes with encoding table prepared for ISO-8859-2
 (Latin-2) encoding. If your data come in different one, you might
 want to check the module B<Cstocs> which can be used for reencoding
-of the list's data prior to calling I<cssort>, or reencode this
+of the list's data prior to calling I<czsort>, or reencode this
 module to fit your needs. 
 
 I have built and tested this module using Perl 5.004 but it should
@@ -69,9 +69,9 @@ at Faculty of Informatics, Masaryk University, Brno
 =cut
 
 #
-# Here starts the Cssort namespace
+# Here starts the Cz::Sort namespace
 #
-package Cssort;
+package Cz::Sort;
 use integer;
 use strict;
 use Exporter;
@@ -79,11 +79,11 @@ use vars qw( @ISA @EXPORT $VERSION $DEBUG );
 @ISA = qw( Exporter );
 
 #
-# We implicitly export both the cssort and cssort_hash functions.
+# We implicitly export both the czcmp and czsort functions.
 # Since these are the only two that can be used by ordinary users, it
 # should not cause big harm.
 #
-@EXPORT = qw( cssort cscmp );
+@EXPORT = qw( czsort czcmp );
 
 $VERSION = '0.62';
 $DEBUG = 0;
@@ -189,10 +189,10 @@ for (0 .. 3)
 #
 # Compare two scalar, according to the tables.
 #
-sub cscmp
+sub czcmp
 	{
 	my ($a, $b) = (shift, shift);
-	print STDERR "cscmp: $a/$b\n" if DEBUG;
+	print STDERR "czcmp: $a/$b\n" if DEBUG;
 	my ($a1, $b1) = ($a, $b);
 	my $level = 0;
 	while (1)
@@ -305,8 +305,8 @@ sub cscmp
 #
 # Cssort does the real thing.
 #
-sub cssort
-	{ sort { cscmp($a, $b); } @_; }
+sub czsort
+	{ sort { czcmp($a, $b); } @_; }
 
 1;
 

@@ -1,20 +1,20 @@
 
-# Cstocs.pm
+# Cz::tocz.pm
 
 BEGIN { $| = 1; print "1..5\n"; }
 END {print "not ok 1\n" unless $loaded_cstocs;}
 
 
-BEGIN { print "Loading module Cstocs\n"; }
+BEGIN { print "Loading module Cz::tocz\n"; }
 
-use Cstocs;
+use Cz::tocz;
 $loaded_cstocs = 1;
 print "ok 1\n";
 
 
-print "Creating new Cstocs object\n";
+print "Creating new Cz::tocz object\n";
 
-my $il2_to_ascii = new Cstocs 'il2', 'ascii';
+my $il2_to_ascii = new Cz::tocz 'il2', 'ascii';
 print "not " unless defined $il2_to_ascii;
 print "ok 2\n";
 

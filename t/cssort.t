@@ -1,23 +1,23 @@
 
-# Cssort.pm
+# Cz::Sort.pm
 
 BEGIN { $| = 1; print "1..5\n"; }
-END {print "not ok 1\n" unless $loaded_cssort;}
+END {print "not ok 1\n" unless $loaded_czsort;}
 
 
-BEGIN { print "Loading module Cssort\n"; }
+BEGIN { print "Loading module Cz::Sort\n"; }
 
-use Cssort;
-$loaded_cssort = 1;
+use Cz::Sort;
+$loaded_czsort = 1;
 print "ok 1\n";
 
 
-print "Testing cscmp\n";
+print "Testing czcmp\n";
 
-print "not " if cscmp("_x j&á", "_&") != 1;
+print "not " if czcmp("_x j&á", "_&") != 1;
 print "ok 2\n";
 
-print "not " if cscmp("placka x", "plácka g_&") != -1;
+print "not " if czcmp("placka x", "plácka g_&") != -1;
 print "ok 3\n";
 
 
@@ -29,7 +29,7 @@ my @good_out = qw( plagiát plachta plánì plánièka Plánièka plaòka plankton
 print "Sorting the list: @in\n";
 print "Expecting: @good_out\n";
 
-my @out = cssort(@in);
+my @out = czsort(@in);
 
 print "Got: @out\n";
 
@@ -50,7 +50,7 @@ print "ok 4\n";
 print "Sorting the list: @in\n";
 print "Expecting: @good_out\n";
 
-@out = cssort(@in);
+@out = czsort(@in);
 
 print "Got: @out\n";
 

@@ -1,8 +1,8 @@
 use ExtUtils::MakeMaker;
 WriteMakefile(
-	NAME		=> 'Cstools',
-	VERSION		=> '0.03',
-	PMLIBDIRS	=> [ 'Cstocs/enc' ],
+	NAME		=> 'Cz',
+	VERSION		=> '0.04',
 	EXE_FILES	=> [ 'cstocs' ],
+	DISTNAME	=> 'Cstools',
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
 );

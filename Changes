@@ -15,4 +15,8 @@ Revision history for Perl extension Cstools.
 
 	Cssort version 0.62. Now implemented through cscmp function
 	that compares two scalars.
-	
+
+0.04 Thu Jul 10 11:47:40 MET DST 1997
+	Modules renamed to Cz::tocz and Cz::Sort. The command line
+	conversion utility is cstocs still though. The functions
+	exported by Cz::Sort are now czsort and czcmp.
