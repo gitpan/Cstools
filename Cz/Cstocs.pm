@@ -81,7 +81,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.162
+3.163
 
 =head1 SEE ALSO
 
@@ -130,7 +130,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, $class, @data);
 	} 
 
-$VERSION = '3.162';
+$VERSION = '3.163';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -484,6 +484,22 @@ sub available_enc
 	my @list = sort map { s/\.enc$//; $_ } grep { /\.enc$/ } readdir DIR;
 	closedir DIR;
 	return @list;
+	}
+
+sub diacritic_char
+	{
+	my ($encoding, $char) = @_;
+	load_encoding($encoding);
+
+	my @result = ();
+	my $dia;
+	for $dia (@diacritics)
+		{
+		my $name = $char . $dia;
+		push @result, $output_hashes{$encoding}{$name}
+			if defined $output_hashes{$encoding}{$name};
+		}
+	@result;
 	}
 
 1;

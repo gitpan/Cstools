@@ -1,6 +1,9 @@
 
 Revision history for Perl extension Cstools.
 
+0.152 
+	diacritic_char added into Cz::Cstocs.
+
 0.151 Thu Dec 11 17:17:02 MET 1997
 	Fixed typo in cssort, tests extended to include calling
 	external cssort.
