@@ -1,223 +1,315 @@
 
 =head1 NAME
 
-Cssort -- Czech sort
+Cssort - Czech sort
+
+=head1 SYNOPSIS
+
+	use Cssort;
+	my $result = cscmp("_x j&á", "_&p");
+	my @sorted = cssort qw(plachta plaòka Plánièka plánièka plánì);
+	print "@sorted\n";
 
 =head1 DESCRIPTION
 
-Implements czech sorting conventions, indepentent on locales, which
-are often corrupt. Strings are converted to internal 7-bit form and then
-normal Perl's B<sort> routine is called. This should work regardless on
-locales in effect.
+Implements czech sorting conventions, indepentent on current locales
+in effect, which are often bad. Does the four-pass sort. The idea and
+the base of the conversion table comes from Petr Olsak's program B<csr>.
 
-The only function provided by this module is B<cssort>. It works on list
-of strings and returns that list, hmm, sorted.
+The basic function provided by this module, is I<cscmp>. If compares
+two scalars and returns the (-1, 0, 1) result. The function can be
+called directly, like
+
+	my $result = cscmp("_x j&á", "_&p");
+
+But for convenience and also because of compatibility with older
+versions, there is a function I<cssort>. It works on list of strings
+and returns that list, hmm, sorted. The function is defined simply
+like
+
+	sub cssort
+		{ sort { cscmp($a, $b); } @_; }
+
+standard use of user's function in I<sort>. Hashes would be simply
+sorted
+
+	@sorted = sort { cscmp($hash{$a}, $hash{$b}) }
+						keys %hash;
+
+
+Both I<cscmp> and I<cssort> are exported into caller's namespace
+by default.
+
+This module comes with encoding table prepared for ISO-8859-2
+(Latin-2) encoding. If your data come in different one, you might
+want to check the module B<Cstocs> which can be used for reencoding
+of the list's data prior to calling I<cssort>, or reencode this
+module to fit your needs. 
+
+I have built and tested this module using Perl 5.004 but it should
+work fine with any version 5 of Perl -- the module doesn't use
+any of the 5.004 specials. If you receive any errors with older (or
+newer) versions, please let me know and I try to fix them.
 
 =head1 VERSION
 
-0.6
+0.62
 
 =head1 SEE ALSO
 
-perl(1).
+perl(1), Cstocs(3).
 
-=head1 DESCRIPTION
+=head1 AUTHOR
 
-(c) 1997 Jan Pazdziora, adelton@fi.muni.cz
+(c) 1997 Jan Pazdziora <adelton@fi.muni.cz>,
+http://www.fi.muni.cz/~adelton/
 
 at Faculty of Informatics, Masaryk University, Brno
 
 =cut
 
+#
+# Here starts the Cssort namespace
+#
 package Cssort;
+use integer;
+use strict;
 use Exporter;
+use vars qw( @ISA @EXPORT $VERSION $DEBUG );
 @ISA = qw( Exporter );
-@EXPORT = qw( cssort );
 
-$VERSION = '0.6';
-sub Version     { $VERSION; }
+#
+# We implicitly export both the cssort and cssort_hash functions.
+# Since these are the only two that can be used by ordinary users, it
+# should not cause big harm.
+#
+@EXPORT = qw( cssort cscmp );
 
+$VERSION = '0.62';
 $DEBUG = 0;
+sub DEBUG	{ $DEBUG; }
 
+#
+# The table with sorting definitions.
+#
 my @def_table = (
-	'aA áÁ äÄ',	'bB',		'cC',		'èÈ',
-	'dD ïÏ',	'eE éÉ ìÌ',	'fF',		'gG',
-	'hH',		'<ch><Ch><CH>',	'iI íÍ',	'jJ',
-	'kK',		'lL åÅ µ¥',	'mM',		'nN òÒ',
-	'oO óÓ ôÔ öÖ',	'pP',		'qQ',		'rR àÀ',
-	'øØ',		'sS',		'¹©',		'tT »«',
-	'uU úÚ ùÙ üÜ',	'vV',		'wW',		'xX',
-	'yY ýÝ',	'zZ',		'¾®',
-	'0_',		'1',		'2',		'3',
+	'aA áÁ âÂ äÄ ãÃ ±¡',
+	'bB',
+	'cC',		'èÈ æÆ çÇ',
+	'dD ïÏ ðÐ',
+	'eE éÉ ìÌ ëË êÊ',
+	'fF',	
+	'gG',
+	'hH',
+	'<ch><Ch><CH>',
+	'iI íÍ îÎ',
+	'jJ',
+	'kK',
+	'lL åÅ µ¥',	'³£',
+	'mM',
+	'nN òÒ ñÑ',
+	'oO óÓ ôÔ öÖ õÕ',
+	'pP',
+	'qQ',
+	'rR àÀ', 'øØ',
+	'sS',		'¹© ¶¦ ºª',
+	'tT »« þÞ',
+	'uU úÚ ùÙ üÜ ûÛ',
+	'vV',
+	'wW',
+	'xX',
+	'yY ýÝ',
+	'zZ',		'¾® ¼¬ ¿¯',
+	'0',		'1',		'2',		'3',
 	'4',		'5',		'6',		'7',
-	'8',		'9',
+	'8',	'9',
 	' .,;?!:"`\'',
 	' /|\\()[]<>{}',
-	' @&%#^',
-	' =+*',
+	' @&%#^_~',
+	' =+*-×',
 	);
 
-my @multiple = ( {}, {}, {}, {} );
+#
+# Conversion table will hold four arrays, one for each pass. They will
+# be created on the fly if they are needed. We also need to hold
+# information (regexp) about groups of letters that need to be considered
+# as one character (ch).
+#
 my @table = ( );
-my @regexp = ( '', '', '', '' );
+my @regexp = ( '.', '.', '.', '.' );
+my @multiple = ( {}, {}, {}, {} );
 
+#
+# Make_table will build sorting table for given level.
+#
 sub make_table
 	{
 	my $level = shift;
-	@{$table[$level]} = ( '' ) x 256;
-
-	my ($leader, $index) = ('', 0);
+	@{$table[$level]} = ( undef ) x 256;
+	@{$table[$level]}[ord ' ', ord "\t"] = (0, 0);
+	my $i = 1;
 	my $irow = 0;
 	while (defined $def_table[$irow])
 		{
-		my $row = $def_table[$irow];
-		next if ($row =~ s/^ // and $level < 3);
-		my $newleader = substr $row, 0, 1;
-		next unless defined $newleader;
-		if ($newleader ne $leader and $newleader ne '<' and $newleader =~ /^[\040-\177]$/)
+		my $def_row = $def_table[$irow];
+		next if $level <= 2 and $def_row =~ /^ /;
+		while ($def_row =~ /<([cC].*?)>|(.)/sg)
 			{
-			if ($index == 1)
+			my $match = $+;
+			if ($match eq ' ')
 				{
-				for (@just_done)
-					{
-					if (length $_ > 1)
-						{ ${$multiple[$level]}{$_} = $leader; }
-					else
-						{ $table[$level][ ord $_ ] = $leader; }
-					}
+				if ($level == 1)
+					{ $i++; }
 				}
-			@just_done = ();
-			if ($newleader !~ /^[a-z]$/)
+			else
 				{
-				if ($leader =~ /^[A-Z]$/)
-					{ $leader++; }
+				if (length $match == 1)
+					{ $table[$level][ord $match] = $i; }
 				else
-					{ $leader = 'a'; }
-				}
-			else
-				{ $leader = "\U$newleader"; }
-			$index = 0;
-			$value = $leader . $index;
-			}
-		while ($row ne '')
-			{
-			my $key;
-			if ($row =~ s/^<([cC].*?)>//s)
-				{ $key = $+; }
-			else
-				{ $row =~ s/^.//s; $key = $&; }
-			if (length $key > 1)
-				{
-				${$multiple[$level]}{$key} = $value;
-				$regexp[$level] .= '|' . $key;
-				push @just_done, $key;
-				}
-			else
-				{
-				$table[$level][ ord $key ] = $value;
-				push @just_done, $key;
-				}
-			
-			if (($row =~ s/^\s+// and $level >= 1) or $level >= 2)
-				{
-				$index++;
-				$value = $leader . $index;
+					{
+					$multiple[$level]{$match} = $i;
+					$regexp[$level] = $match . "|" . $regexp[$level];
+					}
+				if ($level >= 2)
+					{ $i++; }
 				}
 			}
-		$index++;
-		$value = $leader . $index;
+		$i++ if $level < 2;
 		}
 	continue
-		{
-		$irow++;
-		}
-	if ($regexp[$level] ne '')
-		{ $regexp[$level] =~ s/^\|/(/; $regexp[$level] .= '|.)'; }
-	else
-		{ $regexp[$level] = '.'; }
-
-	return;
-	do
-		{
-		print "regexp[$level]: $regexp[$level]\n";
-		for (sort keys %{$multiple[$level]})
-			{ print "MULT: $_:${$multiple[$level]}{$_}\t"; }
-		print "\n";
-		for ( 0 .. 255 )
-			{ print chr $_, ":$table[$level][$_]\t" if $table[$level][$_] ne ''; }
-		print "\n";
-		} if $DEBUG;
+		{ $irow++; }
 	}
 
-sub prepare_data
+#
+# Create the tables now.
+#
+for (0 .. 3)
+	{ make_table($_); }
+
+#
+# Compare two scalar, according to the tables.
+#
+sub cscmp
 	{
-	my ($word, $level) = (shift, shift);
-	if (not defined $table[$level])
-		{ make_table($level); }
-	if ($level <= 1)
+	my ($a, $b) = (shift, shift);
+	print STDERR "cscmp: $a/$b\n" if DEBUG;
+	my ($a1, $b1) = ($a, $b);
+	my $level = 0;
+	while (1)
 		{
-		my $list = [];
-		for (split /\s+/, $word)
+		my ($ac, $bc, $a_no, $b_no, $ax, $bx) = ('', '', 0, 0,
+			undef, undef);
+		if ($level == 0)
 			{
-			s/$regexp[$level]/(defined ${$multiple[$level]}{$&} and ${$multiple[$level]}{$&}) or $table[$level][ord $&]/ges;
-			push @$list, $_;
+			while (not defined $ax and not $a_no)
+				{
+				$a =~ /$regexp[$level]/sg or $a_no = 1;
+				$ac = $&;
+				$ax = ( length $ac == 1 ?
+					$table[$level][ord $ac]
+					: ${$multiple[$level]}{$ac} )
+						if defined $ac;
+				}
+			while (not defined $bx and not $b_no)
+				{
+				$b =~ /$regexp[$level]/sg or $b_no = 1;
+				$bc = $&;
+				$bx = ( length $bc == 1 ?
+					$table[$level][ord $bc]
+					: ${$multiple[$level]}{$bc} )
+						if defined $bc;
+				}
 			}
-		return $list;
+		else
+			{
+			while (not defined $ax and not $a_no)
+				{
+				$a1 =~ /$regexp[$level]/sg or $a_no = 1;
+				$ac = $&;
+				$ax = ( length $ac == 1 ?
+					$table[$level][ord $ac]
+					: ${$multiple[$level]}{$ac} )
+						if defined $ac;
+				}
+			while (not defined $bx and not $b_no)
+				{
+				$b1 =~ /$regexp[$level]/sg or $b_no = 1;
+				$bc = $&;
+				$bx = ( length $bc == 1 ?
+					$table[$level][ord $bc]
+					: ${$multiple[$level]}{$bc} )
+						if defined $bc;
+				}
+			}
+
+		print STDERR "level $level: ac: $ac -> $ax; bc: $bc -> $bx ($a_no, $b_no)\n" if DEBUG;
+
+		return -1 if $a_no and not $b_no;
+		return 1 if not $a_no and $b_no;
+		if ($a_no and $b_no)
+			{
+			if ($level == 0)
+				{ $level = 1; next; }
+			last;
+			}
+
+		return -1 if ($ax < $bx);
+		return 1 if ($ax > $bx);
+
+		if ($ax == 0 and $bx == 0)
+			{
+			if ($level == 0)
+				{ $level = 1; next; }
+			$level = 0; next;
+			}
 		}
-	else
+	for $level (2 .. 3)
 		{
-		$word =~ s/$regexp[$level]/defined ${$multiple[$level]}{$&} and ${$multiple[$level]}{$&} or $table[$level][ord $&]/ges;
-		return $word;
-		}
-	}
-sub compare
-	{
-	my ($x, $y, $level) = @_;
-	if ($level <= 1)
-		{
-		my $i = 0;
-		my $result = 0;
 		while (1)
 			{
-			if (not defined $x->[$i])
+			my ($ac, $bc, $a_no, $b_no, $ax, $bx)
+				= ('', '', 0, 0, undef, undef);
+			while (not defined $ax and not $a_no)
 				{
-				return 0 if not defined $y->[$i];
-				return -1;
+				$a =~ /$regexp[$level]/sg or $a_no = 1;
+				$ac = $&;
+				$ax = ( length $ac == 1 ?
+					$table[$level][ord $ac]
+					: ${$multiple[$level]}{$ac} )
+						if defined $ac;
 				}
-			else
+			while (not defined $bx and not $b_no)
 				{
-				return 1 if not defined $y->[$i];
-				$result = $x->[$i] cmp $y->[$i];
-				return $result if $result;
+				$b =~ /$regexp[$level]/sg or $b_no = 1;
+				$bc = $&;
+				$bx = ( length $bc == 1 ?
+					$table[$level][ord $bc]
+					: ${$multiple[$level]}{$bc} )
+						if defined $bc;
 				}
-			$i++;
+			
+			print STDERR "level $level: ac: $ac -> $ax; bc: $bc -> $bx ($a_no, $b_no)\n" if DEBUG;
+			return -1 if $a_no and not $b_no;
+			return 1 if not $a_no and $b_no;
+			if ($a_no and $b_no)
+				{ last; }
+			return -1 if ($ax < $bx);
+			return 1 if ($ax > $bx);
 			}
-
 		}
-	else
-		{ return $x cmp $y; }
-	}
-sub cssort
-	{
-	map { $_->[0] }
-		sort {
-			my $level;
-			for $level (0 .. 3)
-				{
-				$a->[$level + 1] = prepare_data($a->[0], $level)
-					unless defined $a->[$level + 1];
-				$b->[$level + 1] = prepare_data($b->[0], $level)
-					unless defined $b->[$level + 1];
-				my $result = compare($a->[$level + 1],
-					$b->[$level + 1], $level);
-				return $result if $result;
-				}
-			return 0;
-				}
-				map { [ $_ ] } @_;
+	return 0;
 	}
 
 1;
 
+#
+# Cssort does the real thing.
+#
+sub cssort
+	{ sort { cscmp($a, $b); } @_; }
+
+1;
+
 __END__
+
 

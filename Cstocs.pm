@@ -1,8 +1,7 @@
 
 =head1 NAME
 
-Cstocs -- module for conversions between commonly used charset
-	encodings of the Czech and Slovak languages.
+Cstocs - conversions of charset encodings for the Czech language
 
 =head1 SYNOPSIS
 
@@ -15,14 +14,21 @@ Cstocs -- module for conversions between commonly used charset
 
 This module helps in converting texts between various charset
 encodings, used for Czech and Slovak languages. The instance of the
-object C<Cstocs>, taking two parameters for input and output encoding,
+object B<Cstocs>, taking two parameters for input and output encoding,
 can be afterwards used as a function reference to convert strings. For
-backward compatibility, also a method C<conv> is supported, so the
+backward compatibility, method I<conv> is supported as well, so the
 example above could also read
 
 	while (<>)
 		{ print $il2_to_ascii->conv($_); }
 
+The conversion function takes string and returns string.
+
+Currently the encodings included in this package are:
+
+	ascii cork il1 il2 kam koi8 pc2 vga 1250 
+
+the encoding files can be found in the F<Cstocs/enc> directory.
 
 =head1 AUTHOR
 
@@ -32,7 +38,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.03
+3.06
 
 =head1 SEE ALSO
 
@@ -46,9 +52,10 @@ package Cstocs;
 no strict;
 use vars qw($VERSION $DEBUG $DEFAULTCSTOCSDIR);
 
-$VERSION = '3.03';
+$VERSION = '3.06';
 
 $DEBUG = 0;
+sub DEBUG ()	{ $DEBUG; }
 
 # Directory that contains the encoding files
 $DEFAULTCSTOCSDIR = '/packages/share/cstocs/lib';
@@ -59,7 +66,7 @@ if (defined $INC{'Cstocs.pm'})
 	$DEFAULTCSTOCSDIR = $INC{'Cstocs.pm'};
 	$DEFAULTCSTOCSDIR =~ s!Cstocs.pm$!Cstocs/enc!;
 	print STDERR "Using enc-dir $DEFAULTCSTOCSDIR from \@INC\n"
-		if $DEBUG;
+		if DEBUG;
 	}
 
 my $cstocsdir = $DEFAULTCSTOCSDIR;
@@ -67,7 +74,7 @@ if (defined $ENV{'CSTOCSDIR'})
 	{
 	$cstocsdir = $ENV{'CSTOCSDIR'};
 	print STDERR "Using enc-dir $cstocsdir from the CSTOCSDIR env-var\n"
-		if $DEBUG;
+		if DEBUG;
 	}
 
 my %accent = ();
@@ -83,7 +90,7 @@ sub load_encoding
 
 	my $file = "$cstocsdir/$enc.enc";
 	open FILE, $file or die "Error reading $file: $!\n";
-	print STDERR "Parsing encoding file $file\n" if $DEBUG;
+	print STDERR "Parsing encoding file $file\n" if DEBUG;
 	while (<FILE>)
 		{
 		next if /^#/;
@@ -99,7 +106,7 @@ sub load_accent
 	{
 	my $file = "$cstocsdir/accent";
 	open FILE, $file or die "Error reading $file: $!\n";
-	print STDERR "Parsing accent file $file\n" if $DEBUG;
+	print STDERR "Parsing accent file $file\n" if DEBUG;
 	while (<FILE>)
 		{
 		next if /^#/;
@@ -115,7 +122,7 @@ sub new
 	{
 	my $class = shift;
 	my ($inputenc, $outputenc) = (shift, shift);
-	print STDERR "Loading Cstocs for $inputenc, $outputenc\n" if $DEBUG;
+	print STDERR "Loading Cstocs for $inputenc, $outputenc\n" if DEBUG;
 
 	my (%options) = @_;
 
@@ -170,13 +177,21 @@ sub new
 	if ($one_by_one)
 		{
 		$dststr = "\Q$dststr";
-		$fn = eval qq!sub { my \$e = shift; \$e =~ tr/$srcstr/$dststr/; \$e; };!;
+		$fn = eval qq!sub { local (\$_) = shift; tr/$srcstr/$dststr/; \$_; };!;
+		do {
+			chomp $@;
+			die "$@, line ", __LINE__, "\n";
+			} if $@;
 		}
 	else
 		{
 		my $convname = 'conv_' . $inputenc . '_' . $outputenc;
 		@{$convname} = @convert;
-		$fn = eval qq!sub { my \$e = shift; \$e =~ s/[$srcstr]/ \${$convname}[ord \$&] /sge; \$e; };!;
+		$fn = eval qq!sub { local (\$_) = shift; s/[$srcstr]/ \${$convname}[ord \$&] /sge; \$_ };!;
+		do {
+			chomp $@;
+			die "$@, line ", __LINE__, "\n"
+			} if $@;
 		}
 	bless $fn, $class;
 	$fn;

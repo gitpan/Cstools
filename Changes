@@ -1,3 +1,4 @@
+
 Revision history for Perl extension Cstools.
 
 0.01 Sun Jun 15 13:33:44 MET DST 1997
@@ -5,4 +6,13 @@ Revision history for Perl extension Cstools.
 
 0.02 Wed Jun 18 16:13:20 MET DST 1997
 	First version released. Contains Cstocs and Cssort modules.
+
+	Cstocs is version 3.03, Cssort version 0.6.
+
+0.03 Sun Jul  6 20:41:47 MET DST 1997
+	Cstocs is version 3.06. Fixed the problem with handling long
+	options.
+
+	Cssort version 0.62. Now implemented through cscmp function
+	that compares two scalars.
 	

@@ -16,4 +16,5 @@ MANIFEST
 Makefile.PL
 README
 cstocs
-test.pl
+t/cssort.t
+t/cstocs.t
