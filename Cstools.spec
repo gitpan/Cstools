@@ -1,19 +1,55 @@
 Summary: Czech laguage tools
 Name: cstools
-Version: 0.170
+Version: 0.171
 Release: 1
-Group: Utilities/Text
-Source: Cstools-0.170.tar.gz
+Group: Applications/Text
+Source: Cstools-0.171.tar.gz
 URL: http://www.fi.muni.cz/~adelton/perl/
 Copyright: 1997--1998 Jan Pazdziora, adelton@fi.muni.cz.
 Buildroot: /tmp/cstools-root
-Packager: peak
+Packager: Milan Kerslager <milan.kerslager@spsselib.hiedu.cz>
 
 %description
+This package includes modules that are usefull when dealing with
+Czech (and Slovak) texts in Perl.
+
+Program cstocs:
+   This version of popular charset reencoding utility uses the above
+   mentioned module to convert text between various charsets.
+
+Module Cz::Cstocs:
+   Implements object for various charset encodings, used for the Czech
+   language -- either as objects, or as direct conversion functions.  One
+   of the charsets is tex for things like \v{c}.
+
+Module Cz::Sort:
+   Sorts according to Czech sorting conventions, regardless on (usually
+   broken) locales. Exports functions czcmp and czsort which can be used
+   in similar way as as Perl's internals cmp and sort.
+
+%description -l cs
+V tomto balíku jsou moduly, které mohou být u¾iteèné pøi práci s èeskými
+(a slovenskými) texty v Perlu.
+
+Program cstocs:
+   Tato verze konverzího programu cstocs je zalo¾ena na vý¹e uvedeném
+   modulu. Provádí pøevody kódování nad danými soubory nebo nad
+   standardním vstupem.
+
+Modul Cz::Cstocs:
+   Objekt, pomocí nìho¾ je mo¾no konvertovat mezi znakovými sadami bez
+   nutnosti vnìj¹ího programu -- buï formou objektovou, nebo pøímými
+   konverzními funkcemi.  Jednou ze znakových sad je i sada tex, tedy
+   napø.  \v{c}.
+
+Modul Cz::Sort:
+   Implementuje ètyøprùchodové èeské tøídìní, nezávislé na pou¾itých
+   locales, proto¾e kdo má správné locales, ¾e? Exportuje funkce czcmp
+   a czsort, které pracují podobnì jako perlovské vestavìné cmp a sort.
 
 %prep
 
-%setup -n Cstools-0.170
+%setup -n Cstools-0.171
 
 %build
 
@@ -51,4 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/lib/perl5/man/man3/*
 /usr/lib/perl5/site_perl/Cz/*
 %doc Changes README
+
+%changelog
+* Thu Jul 15 1999 Milan Kerslager <milan.kerslager@spsselib.hiedu.cz>
+- added descriptions (en, cs)
 

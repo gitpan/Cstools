@@ -3,7 +3,7 @@ use Config;
 
 use ExtUtils::MakeMaker;
 
-my $VERSION = '0.170';
+my $VERSION = '0.171';
 
 sub MY::dist {
 	package MY; # so that "SUPER" works right
@@ -19,8 +19,8 @@ specversion: Makefile.PL Cstools.spec.dist
 
 rpm: dist
 	rpm -tb -vv ../\$(DISTNAME)-\$(VERSION).tar.gz
-
 ";
+
 	}
 
 WriteMakefile(
@@ -33,6 +33,6 @@ WriteMakefile(
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz',
 		POSTOP => 'mv $(DISTNAME)-$(VERSION).tar.gz ../' },
 	clean		=> { FILES => 'bin/cstocs bin/cssort' },
-	macro		=> { DIST_DEFAULT => 'specversion tardist' },
+	macro		=> { DIST_DEFAULT => 'specversion tardist', },
 	);
 

@@ -1,6 +1,9 @@
 
 Revision history for Perl extension Cstools.
 
+0.171 Mon Jul 19 10:36:24 MET DST 1999
+	The rpm spec file extended, thanks to Milan Kerslager.
+
 0.170 Sun Jun 13 17:17:38 MET DST 1999
 	Fixed incompatibility introduced by the Exporter coming with
 	the 5.004_05* version of Perl, distributed (at least) with RH.
