@@ -220,8 +220,10 @@ for $tag (keys %options)
 
 print STDERR "Calling Cz::Cstocs $inputenc, $outputenc\n" if Cz::Cstocs::DEBUG;
 my $convert = new Cz::Cstocs $inputenc, $outputenc, %options;
-
-exit (1) unless defined $convert;
+if (not defined $convert) {
+	print STDERR $@;
+	exit(1);
+	}
 
 while (<>)
 	{ print &$convert($_); }

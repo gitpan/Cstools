@@ -2,7 +2,7 @@
 ###
 # Cz::Cstocs.pm
 
-BEGIN { $| = 1; print "1..20\n"; }
+BEGIN { $| = 1; print "1..21\n"; }
 END {print "not ok 1\n" unless $loaded_cstocs;}
 
 ###
@@ -171,4 +171,14 @@ use Cz::Cstocs '_1250_il2';
 my $result20 = _1250_il2("\212");
 printf "Got %o\nnot ", ord($result20) if $result20 ne "©";
 print "ok 20\n";
+
+###
+
+print "Test the aliases\n";
+
+my $conv = new Cz::Cstocs 'iso-8859-2', 'US-ASCII';
+if (not defined $conv) {
+	print "$Cz::Cstocs::errstr\nnot ";
+	}
+print "ok 21\n";
 

@@ -1,6 +1,17 @@
 
 Revision history for Perl extension Cstools.
 
+0.158 Sun Feb 21 14:06:42 MET 1999
+	Cstocs (3.17): changed error handling in Cz::Cstocs:
+	new Cz::Cstocs now doesn't die, only returns undef and sets $@,
+	reported by Jan Kasprzak. Added note about the typeglob syntax,
+	thanks to Jan Krynicky. Added aliases, thanks to Jan Krynicky
+	for making me to finaly do this.
+
+0.157 Mon Dec  7 23:05:54 MET 1998
+	Cstocs (3.168): fixed bug that prevented importing functions
+	not starting with underline.
+
 0.156 Wed Oct  7 15:01:43 MET DST 1998
 	Cstocs (3.167): Added Chroatian \dj for eth, suggested by
 	Dobrica Pavlinusic. Conversion function is now undef clean.

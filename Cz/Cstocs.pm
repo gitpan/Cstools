@@ -10,7 +10,7 @@ package Cz::Cstocs;
 use strict;
 use Exporter;
 
-use vars qw( $VERSION $DEBUG $cstocsdir @ISA @EXPORT_OK %EXPORT );
+use vars qw( $VERSION $DEBUG $cstocsdir @ISA @EXPORT_OK %EXPORT $errstr);
 
 @ISA = qw(Exporter);
 @EXPORT_OK = ();
@@ -28,13 +28,13 @@ sub import
 			{
 			local $^W = 0;
 			next if grep { $_ eq $fn } @EXPORT_OK;
-			my ($in, $out) = $fn =~ /^_(.*?)_(?:to_)?(.*)$/;
+			my ($in, $out) = $fn =~ /^_?(.*?)_(?:to_)?(.*)$/;
 			next unless defined $out;
 			my $fnref = new Cz::Cstocs $in, $out;
-			die "Definition of $fn failed\n"
+			die "Definition of $fn failed: $errstr"
 						unless defined $fnref;;
 			eval "sub $fn { \$fnref->conv(\@_); }; ";
-			if ($@) { die $@; }
+			if ($@) { die "Creating conversion function $fn failed: $@"; }
 			push @EXPORT_OK, $fn;
 			$EXPORT{$fn} = 1;
 			}
@@ -42,7 +42,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, $class, @data);
 	} 
 
-$VERSION = '3.167';
+$VERSION = '3.17';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -78,6 +78,10 @@ $cstocsdir = $defaultcstocsdir unless defined $cstocsdir;
 my %accent = ();
 my $accent_read = 0;
 
+# Hash of alias covnersions
+my %alias = ();
+my $alias_read = 0;
+
 # Input and output hashes
 my %input_hashes = ();
 my %output_hashes = ();
@@ -100,7 +104,11 @@ my @diacritics = qw( abovedot acute breve caron cedilla circumflex
 # Filling input and output_hashes tables for given encoding
 sub load_encoding
 	{
-	my $enc = shift;
+	my $enc = lc shift;
+
+	$enc =~ s/[^a-z0-9]//g;
+	if (defined $alias{$enc}) { $enc = $alias{$enc}; }
+
 	return if defined $input_hashes{$enc};	# has already been loaded
 
 	my $file = "$cstocsdir/$enc.enc";
@@ -239,7 +247,7 @@ sub load_accent
 	$accent_read = 1;
 	
 	my $file = "$cstocsdir/accent";
-	open FILE, $file or die "Error reading $file: $!\n";
+	open FILE, $file or die "Error reading accent file $file: $!\n";
 	print STDERR "Parsing accent file $file\n" if DEBUG;
 
 	local $_;
@@ -258,6 +266,21 @@ sub load_accent
 	close FILE;
 	}
 
+# Load the alias file, fill the global %alias hash;
+sub load_alias {
+	return if $alias_read;
+	$alias_read = 1;
+	my $file = "$cstocsdir/alias";
+
+	open FILE, $file or die "Error reading alias file $file: $!\n";
+	local $_;
+	while (<FILE>) {
+		chomp;
+		my ($alias, $enc) = split;
+		$alias{$alias} = $enc;
+		}
+	close FILE;
+	}
 
 # Constructor -- takes two arguments, input and output encodings,
 # a optionally hash of options. Returns reference to code that will
@@ -303,10 +326,14 @@ sub new
 	# encode settings into the function name
 	if (defined $functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"})
 		{ return $functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"}; }
-	
-	load_encoding($inputenc);
-	load_encoding($outputenc);
-	load_accent() if $use_accent;
+
+	eval {
+		load_alias();
+		load_encoding($inputenc);
+		load_encoding($outputenc);
+		load_accent() if $use_accent;
+		};
+	if ($@) { $errstr = $@; return; }
 
 	my $conv = {};
 
@@ -374,7 +401,7 @@ sub new
 
 	my $fn = eval $fntext;
 	do {	chomp $@;
-		die "$@, line ", __LINE__, "\n";
+		die "Fatal error in Cz::Cstocs: please report this to adelton\@fi.muni.cz so\n that we could find out what happened. Thanks.\n$@, line ", __LINE__, "\n";
 		} if $@;
 	bless $fn, $class;
 	
@@ -388,7 +415,7 @@ sub conv
 	}
 sub available_enc
 	{
-	opendir DIR, $cstocsdir or die "Error reading $cstocsdir\n";
+	opendir DIR, $cstocsdir or warn "Error reading $cstocsdir\n";
 	my @list = sort map { s/\.enc$//; $_ } grep { /\.enc$/ } readdir DIR;
 	closedir DIR;
 	return @list;
@@ -424,6 +451,12 @@ sub diacritic_char
 	while (<>)
 		{ print il2_ascii($_); }
 
+	use Cz::Cstocs;
+	sub dos2win;
+	*il2toascii = new Cz::Cstocs 'il2', 'ascii';
+	print il2toascii $data;
+	# Thanks to Jan Krynicky for poining this out
+
 =head1 DESCRIPTION
 
 This module helps in converting texts between various charset
@@ -431,11 +464,15 @@ encodings, used for Czech and Slovak languages. The instance of the
 object B<Cz::Cstocs> is created using method B<new>. It takes at
 least two parameters for input and output encoding and can be
 afterwards used as a function reference to convert strings/lists.
+Cz::Cstocs supports fairly free form of aliases, so iso8859-2,
+ISO-8859-2, iso88592 and il2 are all aliases of the same encoding.
 For backward compatibility, method I<conv> is supported as well,
 so the example above could also read
 
 	while (<>)
 		{ print $il2_to_ascii->conv($_); }
+
+You can also use typeglob syntax.
 
 The conversion function takes a list and returns list of converted
 strings (in the list context) or one string consisting of concatenated
@@ -482,6 +519,14 @@ define two functions, that are loaded into caller's namespace and
 can be used directly. In this case, you cannot specify additional
 options, you only have default behaviour.
 
+=head1 ERROR HANDLING
+
+If you request an unknown encoding in the call to new Cz::Cstocs,
+the conversion object is not defined and the variable
+$Cz::Cstocs::errstr is set to the error message. When you specify
+unknown encoding in the use call style (like C<use Cz::Cstocs
+'il2_ascii';>), the die is called.
+
 =head1 AUTHOR
 
 Jan Pazdziora, adelton@fi.muni.cz, created the module version.
@@ -490,7 +535,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.167
+3.17
 
 =head1 SEE ALSO
 
