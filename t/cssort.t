@@ -49,13 +49,14 @@ while (<FILE>)
 close FILE;
 
 
-print "Calling the external cssort program\n";
-
 use ExtUtils::testlib;
-use IPC::Open2;
 
 my $libs = join ' ', map { '-I' . $_ } @INC;
-print "Will be starting $^X $libs blib/script/cssort\n";
+my $TSTFILE = 'out.tst';
+$TSTFILE = 't/' . $TSTFILE if -d 't';
+
+print "Calling the external cssort program\n";
+print "Will be starting $^X $libs blib/script/cssort > $TSTFILE\n";
 
 open FILE, $sorttab or die "Error reading $sorttab: $!\n";
 $in = 0;
@@ -66,13 +67,19 @@ while (<FILE>)
 	elsif (/^---OUTPUT---$/)	{ @goodout = (); $in = 0; }
 	elsif (/^---DONE---$/)
 		{
-		open2(\*READ, \*WRITE, $^X, $libs, 'blib/script/cssort')
+		open PROCESS, "| $^X $libs blib/script/cssort > $TSTFILE"
 			or do { print "Running cssort failed.\n"; last; };
-		print WRITE @in;
-		close WRITE;
+		print PROCESS @in;
+		close PROCESS;
+
+		open READ, $TSTFILE
+			or do { print "Output file was not created\n"; last; };
 		my $sorted = join "; ", <READ>;
-		close READ;
 		my $expect = join "; ", @goodout;
+		close READ;
+
+		unlink $TSTFILE;
+
 		print "Expecting $expect\nGot $sorted\n";
 		test($sorted eq $expect);
 		$in = 1;

@@ -47,7 +47,16 @@ print "Calling the external cstocs program\n";
 
 use ExtUtils::testlib;
 my $libs = join " -I", '', @INC;
-my $result3 = `echo "je¾eèek" | $^X $libs blib/script/cstocs il2 ascii`;
+my $TSTFILE = 'out.tst';
+$TSTFILE = 't/' . $TSTFILE if -d 't';
+
+open PROCESS, "| $^X $libs blib/script/cstocs il2 ascii > $TSTFILE";
+print PROCESS "je¾eèek\n";
+close PROCESS;
+
+open READ, $TSTFILE;
+my $result3 = <READ>;
+close READ;
 print "Got '$result3'\n";
 
 print "not " if $result3 ne "jezecek\n";
@@ -57,11 +66,19 @@ print "ok 5\n";
 
 print "And once more, for the bug that was fixed in 3.07\n";
 
-my $result4 = `echo "\375" | $^X $libs blib/script/cstocs pc2 il2`;
+open PROCESS, "| $^X $libs blib/script/cstocs pc2 il2 > $TSTFILE";
+print PROCESS "\375\n";
+close PROCESS;
+
+open READ, $TSTFILE;
+my $result4 = <READ>;
+close READ;
 print "Got '$result4'\n";
 
 print "not " if $result4 ne "ø\n";
 print "ok 6\n";
+
+unlink $TSTFILE;
 
 ###
 
