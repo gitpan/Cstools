@@ -93,7 +93,7 @@ getopt('dfce', \%opts);
 if (defined $opts{'h'})
 	{
 	print STDERR <<"EOF";
-This is cssort version $CZ::Sort.
+This is cssort version $Cz::Sort::VERSION.
 Usage info: cssort [ -clist | -flist [-dregexp]] [files ...]
 	-c	Columns
 	-f	Field numbers

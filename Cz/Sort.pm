@@ -53,7 +53,7 @@ newer) versions, please let me know and I try to fix them.
 
 =head1 VERSION
 
-0.64
+0.65
 
 =head1 SEE ALSO
 
@@ -72,6 +72,7 @@ at Faculty of Informatics, Masaryk University, Brno
 # Here starts the Cz::Sort namespace
 #
 package Cz::Sort;
+no locale;
 use integer;
 use strict;
 use Exporter;
@@ -85,7 +86,7 @@ use vars qw( @ISA @EXPORT $VERSION $DEBUG );
 #
 @EXPORT = qw( czsort czcmp cssort cscmp );
 
-$VERSION = '0.64';
+$VERSION = '0.65';
 $DEBUG = 0;
 sub DEBUG	{ $DEBUG; }
 

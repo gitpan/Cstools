@@ -1,6 +1,10 @@
 
 Revision history for Perl extension Cstools.
 
+0.151 Thu Dec 11 17:17:02 MET 1997
+	Fixed typo in cssort, tests extended to include calling
+	external cssort.
+
 0.15 Tue Nov 25 13:08:20 MET 1997
 	Cz::Cstocs 3.162: Added 1525, mac and macce encodings by Marek
 	Veber, bugs fixed in 1250, added items to accent file.
