@@ -57,7 +57,7 @@ newer) versions, please let me know and I try to fix them.
 
 =head1 SEE ALSO
 
-perl(1), Cstocs(3).
+perl(1), Cz::Cstocs(3).
 
 =head1 AUTHOR
 

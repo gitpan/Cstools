@@ -20,3 +20,11 @@ Revision history for Perl extension Cstools.
 	Modules renamed to Cz::tocz and Cz::Sort. The command line
 	conversion utility is cstocs still though. The functions
 	exported by Cz::Sort are now czsort and czcmp.
+
+0.05 Fri Jul 11 13:41:43 MET DST 1997
+	Namespace Cz:: at CPAN officially registered and the modules
+	named Cz::Cstocs and Cz::Sort.
+
+	Cz::Cstocs version is 3.07. Program cstocs now does the #!
+	substitution when installed using make.
+

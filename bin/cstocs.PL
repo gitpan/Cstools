@@ -1,4 +1,22 @@
 #!/usr/bin/perl -w
+#
+# This extraction code was taken from the libwww modules.
+#
+use Config;
+use File::Basename qw(basename dirname);
+chdir(dirname($0));
+($file = basename($0)) =~ s/\.PL$//;
+open OUT,">$file" or die "Can't create $file: $!";
+chmod(0755, $file);
+print "Extracting $file (with #! substitution)\n";
+
+print OUT <<"EOHEADER";
+$Config{'startperl'} -w
+	eval 'exec perl -S \$0 "\$@"'
+		if 0;
+EOHEADER
+
+print OUT <<'EOBODY';
 
 =head1 NAME
 
@@ -95,7 +113,7 @@ Use all rules from accent file.
 
 =head1 VERSION
 
-3.06
+3.07
 
 =head1 SEE ALSO
 
@@ -111,6 +129,8 @@ Jan Pazdziora, adelton@fi.muni.cz created the Perl module version.
 
 use Cstocs;
 use strict;
+
+0 if defined $main::running_under_some_shell;
 
 my ($inputenc, $outputenc);
 my ($fillstring, $cstocsdir, $one_by_more, $use_accent, $debug)
@@ -191,3 +211,4 @@ EOF
 exit;
 }
 
+EOBODY

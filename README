@@ -4,17 +4,17 @@ Readme file for Cstools distribution:
 	This file includes modules that are usefull when dealing with
 	Czech (and Slovak) texts in Perl.
 
-	Module Cstocs:
+	Module Cz::Cstocs:
 
 		Implements object for various charset encodings, used
 		for the Czech language. Included is also version of
 		popular command line utility cstocs.
 
-	Module Cssort:
+	Module Cz::Sort:
 
 		Sorts according to Czech sorting conventions, regardless
-		on (usually broken) locales. Exports functions cscmp
-		and cssort which can be used in the same way as Perl's
+		on (usually broken) locales. Exports functions czcmp
+		and czsort which can be used in the same way as Perl's
 		internals cmp and sort.
 
 Installation:
