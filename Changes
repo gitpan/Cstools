@@ -1,0 +1,8 @@
+Revision history for Perl extension Cstools.
+
+0.01 Sun Jun 15 13:33:44 MET DST 1997
+	First Perl version.
+
+0.02 Wed Jun 18 16:13:20 MET DST 1997
+	First version released. Contains Cstocs and Cssort modules.
+	

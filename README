@@ -1,0 +1,28 @@
+
+Readme file for Cstools distribution:
+
+	This file includes modules that are usefull when dealing with
+	Czech (and Slovak) texts in Perl.
+
+Module Cstocs:
+
+	Implements object for various charset encodings, used for the
+	Czech language. Included is also version of popular command
+	line utility cstocs.
+
+Module Cssort:
+
+	Sorts according to Czech sorting conventions, regardless on
+	(usually broken) locales. Exports function cssort which can
+	be used in the same way as Perl's sort to sort the list of
+	strings.
+
+Available:
+
+	http://www.fi.muni.cz/~adelton/perl/ and on your favorite CPAN
+	site (http://www.perl.com/perl/CPAN/).
+
+Copyright: (c) 1997 Jan Pazdziora, adelton@fi.muni.cz. All rights
+	reserved. This program is free software; you can redistribute
+	it and/or modify it under the same terms as Perl itself.
+

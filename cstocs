@@ -1,0 +1,89 @@
+#!/usr/bin/perl -w
+
+=head1 NAME
+
+cstocs -- charset encoding convertor for the Czech and Slovak languages.
+
+=head1 DESCRIPTION
+
+Please see the
+
+	cstocs --help
+
+for usage info.
+
+=head1 VERSION
+
+3.03
+
+=head1 AUTHOR
+
+Jan Pazdziora, adelton@fi.muni.cz created the module version.
+
+Jan "Yenya" Kasprzak has done the original Un*x implementation.
+
+=cut
+
+use strict;
+use Cstocs;
+
+sub usage {
+	print STDERR <<"EOF";
+Usage: cstocs [options] inputencoding outputencoding [ files ... ]
+    or cstocs [options] --inputencoding=inputencoding \\
+		--outputencoding=outputencoding [ files ... ]
+    where [options] is zero or more of:
+    --dir=string	Directory where to search for encoding and accent
+	files, can also be changed via the CSTOCSDIR environment variable.
+	Default is $Cstocs::DEFAULTCSTOCSDIR.
+    --debug	Print out debugging info while processing.
+    --fillstring=string		Characters from the input encoding not
+	defined in the output encoding nor in the accent file will be
+	replaced by this string (default is single space).
+    --help	Prints out this message.
+    --nochange	Do not use accent file at all.
+    --null	Equivalent to --fillstring=""
+    --onebyone	Use only those entries from the accent file, which will
+	cause replacing of one character by exactly one character (this is
+	the default behavior).
+    --onebymore	Use all entries from the accent file.
+    --version	Prints out the version information.
+EOF
+exit;
+}
+
+my ($inputenc, $outputenc);
+if (grep { /--/ } @ARGV)
+	{
+	print STDERR "Using Getopt::Long\n" ;#if $Cstocs::DEBUG;
+	eval <<EoOpts;
+	use Getopt::Long;
+EoOpts
+	die "$@\n" if $@;
+	eval <<'EoOpts';
+	GetOptions('null' =>	sub { $Cstocs::fillstring = ''; },
+		'fillstring=s' =>	\$Cstocs::fillstring,
+		'onebyone',     sub { $Cstocs::one_by_more = 0; },
+		'onebymore',    sub { $Cstocs::one_by_more = 1; },
+		'nochange',     sub { $Cstocs::use_accent = 0; },
+		'dir=s' =>	\$Cstocs::cstocsdir,
+		'inputencoding=s' =>	\$Cstocs::inputenc,
+		'outputencoding=s' =>	\$Cstocs::outputenc,
+		'help'	=>	\&usage,
+		'version' =>	sub {print STDERR "This is cstocs version $Cstocs::VERSION.\n"; exit 0; },
+		'debug' =>	sub { $Cstocs::DEBUG = 1; },
+		);
+EoOpts
+	die "$@\n" if $@;
+	}
+elsif (@ARGV < 2)
+	{ usage(); }
+
+$inputenc = shift unless defined $inputenc;
+$outputenc = shift unless defined $outputenc;
+my $convert = new Cstocs $inputenc, $outputenc;
+
+while (<>)
+	{ print &$convert($_); }
+
+
