@@ -3,69 +3,6 @@
 
 Cz::Sort - Czech sort
 
-=head1 SYNOPSIS
-
-	use Cz::Sort;
-	my $result = czcmp("_x j&á", "_&p");
-	my @sorted = czsort qw(plachta plaòka Plánièka plánièka plánì);
-	print "@sorted\n";
-
-=head1 DESCRIPTION
-
-Implements czech sorting conventions, indepentent on current locales
-in effect, which are often bad. Does the four-pass sort. The idea and
-the base of the conversion table comes from Petr Olsak's program B<csr>.
-
-The basic function provided by this module, is I<czcmp>. If compares
-two scalars and returns the (-1, 0, 1) result. The function can be
-called directly, like
-
-	my $result = czcmp("_x j&á", "_&p");
-
-But for convenience and also because of compatibility with older
-versions, there is a function I<czsort>. It works on list of strings
-and returns that list, hmm, sorted. The function is defined simply
-like
-
-	sub czsort
-		{ sort { czcmp($a, $b); } @_; }
-
-standard use of user's function in I<sort>. Hashes would be simply
-sorted
-
-	@sorted = sort { czcmp($hash{$a}, $hash{$b}) }
-						keys %hash;
-
-
-Both I<czcmp> and I<czsort> are exported into caller's namespace
-by default, as well as I<cscmp> and I<cssort> that are just aliases.
-
-This module comes with encoding table prepared for ISO-8859-2
-(Latin-2) encoding. If your data come in different one, you might
-want to check the module B<Cstocs> which can be used for reencoding
-of the list's data prior to calling I<czsort>, or reencode this
-module to fit your needs. 
-
-I have built and tested this module using Perl 5.004 but it should
-work fine with any version 5 of Perl -- the module doesn't use
-any of the 5.004 specials. If you receive any errors with older (or
-newer) versions, please let me know and I try to fix them.
-
-=head1 VERSION
-
-0.67
-
-=head1 SEE ALSO
-
-perl(1), Cz::Cstocs(3).
-
-=head1 AUTHOR
-
-(c) 1997 Jan Pazdziora <adelton@fi.muni.cz>,
-http://www.fi.muni.cz/~adelton/
-
-at Faculty of Informatics, Masaryk University, Brno
-
 =cut
 
 #
@@ -86,7 +23,7 @@ use vars qw( @ISA @EXPORT $VERSION $DEBUG );
 #
 @EXPORT = qw( czsort czcmp cssort cscmp );
 
-$VERSION = '0.67';
+$VERSION = '0.68';
 $DEBUG = 0;
 sub DEBUG	{ $DEBUG; }
 
@@ -94,9 +31,9 @@ sub DEBUG	{ $DEBUG; }
 # The table with sorting definitions.
 #
 my @def_table = (
-	'aA áÁ âÂ äÄ ãÃ ±¡',
+	'aA áÁ âÂ ãÃ äÄ ±¡',
 	'bB',
-	'cC',		'èÈ æÆ çÇ',
+	'cC æÆ çÇ',		'èÈ',
 	'dD ïÏ ðÐ',
 	'eE éÉ ìÌ ëË êÊ',
 	'fF',	
@@ -106,28 +43,31 @@ my @def_table = (
 	'iI íÍ îÎ',
 	'jJ',
 	'kK',
-	'lL åÅ µ¥',	'³£',
+	'lL åÅ µ¥ ³£',
 	'mM',
-	'nN òÒ ñÑ',
+	'nN ñÑ òÒ',
 	'oO óÓ ôÔ öÖ õÕ',
 	'pP',
 	'qQ',
-	'rR àÀ', 'øØ',
-	'sS',		'¹© ¶¦ ºª',
+	'rR àÀ',		'øØ',
+	'sS ¶¦ ºª',		'¹©',
+	'ß',
 	'tT »« þÞ',
 	'uU úÚ ùÙ üÜ ûÛ',
 	'vV',
 	'wW',
 	'xX',
 	'yY ýÝ',
-	'zZ',		'¾® ¼¬ ¿¯',
+	'zZ ¿¯ ¼¬',		'¾®',
 	'0',		'1',		'2',		'3',
 	'4',		'5',		'6',		'7',
 	'8',	'9',
 	' .,;?!:"`\'',
-	' /|\\()[]<>{}',
-	' @&%#^_~',
-	' =+*-×',
+	' -­|/\\()[]<>{}',
+	' @&§%$',
+	' _^=+×*÷#¢~',
+	' ÿ·°¨½¸²',
+	' ¤',
 	);
 
 #
@@ -313,4 +253,67 @@ sub czsort
 *cssort = *czsort;
 
 1;
+
+__END__
+
+=head1 SYNOPSIS
+
+	use Cz::Sort;
+	my $result = czcmp("_x j&á", "_&p");
+	my @sorted = czsort qw(plachta plaòka Plánièka plánièka plánì);
+	print "@sorted\n";
+
+=head1 DESCRIPTION
+
+Implements czech sorting conventions, indepentent on current locales
+in effect, which are often bad. Does the four-pass sort. The idea and
+the base of the conversion table comes from Petr Olsak's program B<csr>
+and the code is as compliant with CSN 97 6030 as possible.
+
+The basic function provided by this module, is I<czcmp>. If compares
+two scalars and returns the (-1, 0, 1) result. The function can be
+called directly, like
+
+	my $result = czcmp("_x j&á", "_&p");
+
+But for convenience and also because of compatibility with older
+versions, there is a function I<czsort>. It works on list of strings
+and returns that list, hmm, sorted. The function is defined simply
+like
+
+	sub czsort
+		{ sort { czcmp($a, $b); } @_; }
+
+standard use of user's function in I<sort>. Hashes would be simply
+sorted
+
+	@sorted = sort { czcmp($hash{$a}, $hash{$b}) }
+						keys %hash;
+
+
+Both I<czcmp> and I<czsort> are exported into caller's namespace
+by default, as well as I<cscmp> and I<cssort> that are just aliases.
+
+This module comes with encoding table prepared for ISO-8859-2
+(Latin-2) encoding. If your data come in different one, you might
+want to check the module B<Cstocs> which can be used for reencoding
+of the list's data prior to calling I<czsort>, or reencode this
+module to fit your needs. 
+
+=head1 VERSION
+
+0.68
+
+=head1 SEE ALSO
+
+perl(1), Cz::Cstocs(3).
+
+=head1 AUTHOR
+
+(c) 1997--2000 Jan Pazdziora <adelton@fi.muni.cz>,
+http://www.fi.muni.cz/~adelton/
+
+at Faculty of Informatics, Masaryk University, Brno
+
+=cut
 

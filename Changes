@@ -1,6 +1,12 @@
 
 Revision history for Perl extension Cstools.
 
+0.176 Tue May 16 13:12:38 MET DST 2000
+	Petr Debef brought the text of CSN 97 6030 and Cz::Sort (0.68)
+	has been changed to be as compliant as possible to it. The
+	changes affected rare diacritised letters and some extra marks
+	from the ISO-8859-2 code page.
+
 0.175 Tue May  9 15:10:35 MET DST 2000
 	Use of uninitialized value in Cstocs fixed, reported by Jan
 	Yenya Kasprzak.
@@ -45,8 +51,7 @@ Revision history for Perl extension Cstools.
 
 0.154 Thu Jul  9 16:05:14 MET DST 1998
 	Cstocs (3.165): Fixed bug that caused ignoring the --onebyone
-	flag.  Help page of cstocs now lists available encodings
-	instead of the man page.
+	flag. Help page of cstocs now lists available encodings.
 
 0.153 Tue Mar  3 18:08:12 MET 1998
 	In Makefile.PL added bin/cssort to clean, spotted by Milan

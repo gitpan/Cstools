@@ -29,9 +29,8 @@ Readme pro distribuci Cstools:
 	Modul Cz::Sort:
 
 		Implementuje ètyøprùchodové èeské tøídìní, nezávislé
-		na pou¾itých locales, proto¾e kdo má správné locales,
-		¾e? Exportuje funkce czcmp a czsort, které pracují
-		podobnì jako perlovské vestavìné cmp a sort.
+		na pou¾itých locales. Exportuje funkce czcmp a czsort,
+		které pracují podobnì jako perlovské vestavìné cmp a sort.
 
 
 Readme file for Cstools distribution:
@@ -55,9 +54,9 @@ Readme file for Cstools distribution:
 	Module Cz::Sort:
 
 		Sorts according to Czech sorting conventions, regardless
-		on (usually broken) locales. Exports functions czcmp
-		and czsort which can be used in similar way as as Perl's
-		internals cmp and sort.
+		on locale setting. Exports functions czcmp and czsort
+		which can be used in similar way as as Perl's internals
+		cmp and sort.
 
 Installation:
 	Download the tar.gz, unpack it, change to the Cstools-*
@@ -82,7 +81,7 @@ Available:
 	http://www.fi.muni.cz/~adelton/perl/ and from your favorite
 	CPAN site in the authors/id/JANPAZ/ directory.
 	
-Copyright: (c) 1997--1999 Jan Pazdziora, adelton@fi.muni.cz. All rights
+Copyright: (c) 1997--2000 Jan Pazdziora, adelton@fi.muni.cz. All rights
 	reserved. This library is free software; you can redistribute
 	it and/or modify it under the same terms as Perl itself.
 
