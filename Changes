@@ -1,6 +1,11 @@
 
 Revision history for Perl extension Cstools.
 
+3.42 Fri Oct 18 11:29:40 MET DST 2002
+
+	t/cstocs.t: now skips MIME tests if MIME::Words is not
+	installed.
+
 3.4 Thu Oct 17 13:37:18 MET DST 2002
 
 	Added support for MIME encoding. It requires MIME::Words from
