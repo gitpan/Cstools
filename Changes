@@ -1,6 +1,9 @@
 
 Revision history for Perl extension Cstools.
 
+0.172 Sun Feb 13 18:17:22 MET 2000
+	Fixed alias expansion, reported by Tomas Ebenlendr.
+
 0.171 Mon Jul 19 10:36:24 MET DST 1999
 	The rpm spec file extended, thanks to Milan Kerslager.
 

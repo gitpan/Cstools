@@ -45,7 +45,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, '_stupidity_workaround', @data);
 	} 
 
-$VERSION = '3.180';
+$VERSION = '3.181';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -108,9 +108,6 @@ my @diacritics = qw( abovedot acute breve caron cedilla circumflex
 sub load_encoding
 	{
 	my $enc = lc shift;
-
-	$enc =~ s/[^a-z0-9]//g;
-	if (defined $alias{$enc}) { $enc = $alias{$enc}; }
 
 	return if defined $input_hashes{$enc};	# has already been loaded
 
@@ -285,6 +282,14 @@ sub load_alias {
 	close FILE;
 	}
 
+# Normalizes the encoding name -- expands aliases
+sub normalize_enc_name {
+	load_alias();
+	my $enc = lc shift;
+	$enc =~ s/[^a-z0-9]//g;
+	( defined $alias{$enc} ? $alias{$enc} : $enc );	
+	}
+
 # Constructor -- takes two arguments, input and output encodings,
 # a optionally hash of options. Returns reference to code that will
 # do the conversion, or undef
@@ -326,12 +331,14 @@ sub new
 		$tag eq 'one_by_one' and $one_by_one = $value;	
 		}
 
+	$inputenc = normalize_enc_name($inputenc);
+	$outputenc = normalize_enc_name($outputenc);
+
 	# encode settings into the function name
 	if (defined $functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"})
 		{ return $functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"}; }
 
 	eval {
-		load_alias();
 		load_encoding($inputenc);
 		load_encoding($outputenc);
 		load_accent() if $use_accent;
@@ -540,7 +547,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.171
+3.181
 
 =head1 SEE ALSO
 

@@ -2,7 +2,7 @@
 ###
 # Cz::Cstocs.pm
 
-BEGIN { $| = 1; print "1..21\n"; }
+BEGIN { $| = 1; print "1..22\n"; }
 END {print "not ok 1\n" unless $loaded_cstocs;}
 
 ###
@@ -181,4 +181,10 @@ if (not defined $conv) {
 	print "$Cz::Cstocs::errstr\nnot ";
 	}
 print "ok 21\n";
+
+my $result22 = $conv->conv('malièký je¾eèek');
+printf "Got $result22\n";
+
+print 'not ' if $result22 ne 'malicky jezecek';
+print "ok 22\n";
 
