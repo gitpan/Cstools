@@ -1,11 +1,12 @@
 
 Revision history for Perl extension Cstools.
 
-0.07 Thu Jul 31 19:23:36 MET DST 1997
-	Error by one in Cz::Cstocs fixed -- spotted by Petr Mach·Ëek.
-	Version of Cz::Cstocs changed to 3.08.
+0.08 Thu Jul 31 20:10:31 MET DST 1997
+	'Error by one' in Cz::Cstocs fixed -- spotted by Petr Mach·Ëek.
+	The iso-latin-2 encoding file fixed (rcaron changed to racute).
+	Version of Cz::Cstocs changed to 3.09.
 
-	Czech readme added.
+	Readme in Czech added.
 
 0.05 Fri Jul 11 13:41:43 MET DST 1997
 	Namespace Cz:: at CPAN officially registered and the modules

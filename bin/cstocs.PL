@@ -113,7 +113,7 @@ Use all rules from accent file.
 
 =head1 VERSION
 
-3.08
+3.09
 
 =head1 SEE ALSO
 
