@@ -1,6 +1,31 @@
 
 Revision history for Perl extension Cstools.
 
+0.15 Tue Nov 25 13:08:20 MET 1997
+	Cz::Cstocs 3.162: Added 1525, mac and macce encodings by Marek
+	Veber, bugs fixed in 1250, added items to accent file.
+	Added package Cz::Time by Michael Mraka.
+
+0.149 Thu Nov 20 15:56:37 MET 1997
+	Cz::Cstocs 3.161: Bug fix in 1250.enc, 224 changed to racute,
+	spotted by Marek Veber.
+
+0.148 Mon Nov 17 17:43:45 MET 1997
+	Cz::Sort 0.64: Added script cssort that does Czech sorting on
+	input files, has similar options like cut.
+
+0.132 Sun Nov 16 13:38:01 MET 1997
+	Cz::Cstocs 3.16: Docs fixed. Cz::Cstocs can now be used with
+	conversion function specified, eg.
+
+		use Cz::Cstocs 'il2_ascii';
+
+	will define il2_ascii for immediate use.
+
+0.13 Sat Nov 15 18:12:33 MET 1997
+	Cz::Cstocs 3.155: The conversion functions now work on the
+	whole list, return depends on context. Encoding tex added.
+
 0.10 Fri Sep 26 23:04:27 MET DST 1997
 	Kam encoding file fixed -- Uacute to Uring at 166, spotted by
 	Petr Mach·Ëek. Generation of cstocs improved, minor bug fixes.

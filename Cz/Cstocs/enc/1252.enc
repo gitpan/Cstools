@@ -94,6 +94,7 @@
  125 braceright
  126 asciitilde
  130 quotelowsingle
+ 131 guilder
  132 quotelowdouble
  133 period3
  134 dagger
@@ -101,10 +102,7 @@
  137 permille
  138 Scaron
  139 anglequoteleftsingle
- 140 Sacute
- 141 Tcaron
- 142 Zcaron
- 143 Zacute
+ 140 OE
  145 quoteleft
  146 quoteright
  147 quoteleftdouble
@@ -112,106 +110,105 @@
  149 bullet
  150 endash
  151 emdash
+ 152 doubleacute
  153 trademark
  154 scaron
  155 anglequoterightsingle
- 156 sacute
- 157 tcaron
- 158 zcaron
- 159 zacute
+ 156 oe
+ 159 Ydiaeresis
  160 nobreakspace
- 161 caron
- 162 breve
- 163 Lstroke
+ 161 exclamdown
+ 162 cent
+ 163 sterling
  164 currency
- 165 Aogonek
+ 165 yen
  166 brokenbar
  167 section
  168 diaeresis
  169 copyright
- 170 Scedilla
+ 170 ordfeminine
  171 guillemotleft
  172 notsign
  173 hyphen
- 175 Zabovedot
  174 registered
+ 175 macron
  176 degree
  177 plusminus
- 178 ogonek
- 179 lstroke
+ 178 twosuperior
+ 179 threesuperior
  180 acute
  181 mu
+ 182 paragraph
  183 abovedot
  184 cedilla
- 185 aogonek
- 186 scedilla
+ 185 onesuperior
+ 186 masculine
  187 guillemotright
- 188 Lcaron
- 189 doubleacute
- 190 lcaron
- 191 zabovedot
- 192 Racute
+ 188 onequarter
+ 189 onehalf
+ 190 threequarters
+ 191 questiondown
+ 192 Agrave
  193 Aacute
  194 Acircumflex
- 195 Abreve
+ 195 Atilde
  196 Adiaeresis
- 197 Lacute
- 198 Cacute
+ 197 Aring
+ 198 AE
  199 Ccedilla
- 200 Ccaron
+ 200 Egrave
  201 Eacute
- 202 Eogonek
+ 202 Ecircumflex
  203 Ediaeresis
- 204 Ecaron
+ 204 Igrave
  205 Iacute
  206 Icircumflex
- 207 Dcaron
+ 207 Idiaeresis
  208 Eth
- 209 Nacute
- 210 Ncaron
+ 209 Ntilde
+ 210 Ograve
  211 Oacute
  212 Ocircumflex
- 213 Odoubleacute
+ 213 Otilde
  214 Odiaeresis
  215 multiply
- 216 Rcaron
- 217 Uring
+ 216 Ostroke
+ 217 Ugrave
  218 Uacute
- 219 Udoubleacute
+ 219 Ucircumflex
  220 Udiaeresis
  221 Yacute
- 222 Tcedilla
+ 222 Thorn
  223 ssharp
- 224 racute
+ 224 agrave
  225 aacute
  226 acircumflex
- 227 abreve
+ 227 atilde
  228 adiaeresis
- 229 lacute
- 230 cacute
+ 229 aring
+ 230 ae
  231 ccedilla
- 232 ccaron
+ 232 egrave
  233 eacute
- 234 eogonek
+ 234 ecircumflex
  235 ediaeresis
- 236 ecaron
+ 236 igrave
  237 iacute
  238 icircumflex
- 239 dcaron
+ 239 idiaeresis
  240 eth
- 241 nacute
- 242 ncaron
+ 241 ntilde
+ 242 ograve
  243 oacute
  244 ocircumflex
- 245 odoubleacute
+ 245 otilde
  246 odiaeresis
  247 division
- 248 rcaron
- 249 uring
+ 248 oslash
+ 249 ugrave
  250 uacute
- 251 udoubleacute
+ 251 ucircumflex
  252 udiaeresis
  253 yacute
- 254 tcedilla
- 255 abovedot
-
+ 254 thorn
+ 255 ydiaeresis

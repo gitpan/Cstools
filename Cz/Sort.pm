@@ -38,7 +38,7 @@ sorted
 
 
 Both I<czcmp> and I<czsort> are exported into caller's namespace
-by default.
+by default, as well as I<cscmp> and I<cssort> that are just aliases.
 
 This module comes with encoding table prepared for ISO-8859-2
 (Latin-2) encoding. If your data come in different one, you might
@@ -53,7 +53,7 @@ newer) versions, please let me know and I try to fix them.
 
 =head1 VERSION
 
-0.62
+0.64
 
 =head1 SEE ALSO
 
@@ -79,13 +79,13 @@ use vars qw( @ISA @EXPORT $VERSION $DEBUG );
 @ISA = qw( Exporter );
 
 #
-# We implicitly export both the czcmp and czsort functions.
-# Since these are the only two that can be used by ordinary users, it
-# should not cause big harm.
+# We implicitly export czcmp, czsort, cscmp and cssort functions.
+# Since these are the only ones that can be used by ordinary users,
+# it should not cause big harm.
 #
-@EXPORT = qw( czsort czcmp );
+@EXPORT = qw( czsort czcmp cssort cscmp );
 
-$VERSION = '0.62';
+$VERSION = '0.64';
 $DEBUG = 0;
 sub DEBUG	{ $DEBUG; }
 
@@ -307,6 +307,9 @@ sub czcmp
 #
 sub czsort
 	{ sort { czcmp($a, $b); } @_; }
+
+*cscmp = *czcmp;
+*cssort = *czsort;
 
 1;
 

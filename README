@@ -16,7 +16,8 @@ Readme pro distribuci Cstools:
 	Modul Cz::Cstocs:
 
 		Objekt, pomocí nìho¾ je mo¾no konvertovat mezi
-		znakovými sadami bez nutnosti vnìj¹ího programu.
+		znakovými sadami bez nutnosti vnìj¹ího programu. Nyní
+		také s mo¾ností pøímých konverzních funkcí.
 
 	Program cstocs:
 
@@ -40,7 +41,8 @@ Readme file for Cstools distribution:
 	Module Cz::Cstocs:
 
 		Implements object for various charset encodings, used
-		for the Czech language.
+		for the Czech language. Also implements direct
+		conversion functions.
 	
 	Program cstocs:
 

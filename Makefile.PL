@@ -32,9 +32,10 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
 	NAME		=> 'Cz',
 	DISTNAME	=> 'Cstools',
-	VERSION		=> '0.10',
-	PL_FILES	=> { 'bin/cstocs.PL' => 'bin/cstocs' },
-	EXE_FILES	=> [ 'bin/cstocs' ],
+	VERSION		=> '0.15',
+	PL_FILES	=> { 'bin/cstocs.PL' => 'bin/cstocs',
+					'bin/cssort.PL' => 'bin/cssort' },
+	EXE_FILES	=> [ 'bin/cstocs', 'bin/cssort' ],
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz',
 		POSTOP => 'mv $(DISTNAME)-$(VERSION).tar.gz ../' },
 	clean		=> { FILES => 'bin/cstocs' },

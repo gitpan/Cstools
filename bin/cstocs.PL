@@ -13,7 +13,6 @@ use Cz::Cstocs;
 print "Cz::Cstocs' version is $Cz::Cstocs::VERSION\n";
 print "Available encodings are ", join(" ", Cz::Cstocs::available_enc()), "\n";
 
-
 print OUT <<"EOHEADER";
 $Config{'startperl'} -w
 	eval 'exec perl -S \$0 "\$@"'
@@ -121,11 +120,11 @@ Do not use the F<accent> file at all.
 Use only those rules from the F<accent> file, which rewrite one
 character to one character. If this option is specified, character
 "ecaron" will be rewritten to "e", but "AE" character will not be
-rewritten to "AE" string. This is the default option.
+rewritten to "AE" string.
 
 =item --onebymore
 
-Use all rules from accent file (default).
+Use all rules from accent file. This is the default option.
 
 =head1 VERSION
 
@@ -150,29 +149,20 @@ Jan Pazdziora, adelton@fi.muni.cz, created the Perl module version.
 use strict;
 use Cz::Cstocs;
 
-package Cz::Cstocs;
-
 sub usage {
 	print STDERR <<"EOF";
 Usage: cstocs [options] inputencoding outputencoding [ files ... ]
-    or cstocs [options] --inputencoding=inputencoding \\
-		--outputencoding=outputencoding [ files ... ]
-    where [options] is zero or more of:
-    --dir=string	Directory where to search for encoding and accent
-	files, can also be changed via the CSTOCSDIR environment variable.
-	Default is $Cz::Cstocs::DEFAULTCSTOCSDIR.
-    --debug	Print out debugging info while processing.
-    --fillstring=string		Characters from the input encoding not
-	defined in the output encoding nor in the accent file will be
-	replaced by this string (default is single space).
-    --help	Prints out this message.
+  where [options] can be
+    --dir=string	Alternate directory with encoding and accent files.
+    --fillstring=str	String that will replace unconvertable characters.
+    --null		Equivalent to --fillstring=""
     --nochange, --noaccent	Do not use accent file at all.
-    --null	Equivalent to --fillstring=""
-    --onebyone	Use only those entries from the accent file, which will
-	cause replacing of one character by exactly one character (this is
-	the default behavior).
-    --onebymore	Use all entries from the accent file.
-    --version	Prints out the version information.
+    --onebyone		Use only one-by-one character rules from accent file.
+    --onebymore		Use all entries from the accent file.
+    --version		Print out the version information.
+    --debug		Print out debugging info while processing.
+Input and output encodings can also be specified using --inputencoding
+and --outputencoding options. See man page for detailed description.
 EOF
 exit;
 }
@@ -183,37 +173,60 @@ sub print_version
 	exit 0;
 	}
 
-BEGIN
+# Out defaults are
+my %options = ();
+
+if (grep { /--/ } @ARGV)
 	{
-	use vars qw( $fillstring $one_by_more $use_accent $cstocsdir
-		$DEBUG $inputenc $outputenc);
-	if (grep { /--/ } @ARGV)
-		{
-		## print STDERR "Using Getopt::Long\n";
-		require Getopt::Long;
-		Getopt::Long::GetOptions(
-			'null' =>	sub { $fillstring = ''; },
-			'fillstring=s' =>	\$fillstring,
-			'onebyone' =>	sub { $one_by_more = 0; },
-			'onebymore' =>	sub { $one_by_more = 1; },
-			'noaccent',	sub { $use_accent = 0; },
-			'nochange',	sub { $use_accent = 0; },
-			'dir=s' =>	\$cstocsdir,
-			'inputencoding=s' =>	\$inputenc,
-			'outputencoding=s' =>	\$outputenc,
-			'help'	=>	\&usage,
-			'version' =>	\&print_version,
-			'debug' =>	\$DEBUG,
-			);
-		}
-	elsif (@ARGV < 2)
-		{ usage(); }
+	require Getopt::Long;
+	Getopt::Long::GetOptions(
+
+		'null' =>	sub { $options{'fillstring'} = ''; },
+		'fillstring=s' =>	\$options{'fillstring'},
+		'nofillstring' =>	sub { $options{'nofillstring'} = 1 },
+		'usefillstring' =>	sub { $options{'nofillstring'} = 0 },
+
+		'onebyone' =>	sub { $options{'one_by_one'} = 1; },
+		'onebymore' =>	sub { $options{'one_by_one'} = 0; },
+
+		'noaccent',	sub { $options{'use_accent'} = 0; },
+		'nochange',	sub { $options{'use_accent'} = 0; },
+
+		'dir=s' =>	\$options{'cstocsdir'},
+
+		'inputencoding=s' =>	\$options{'inputenc'},
+		'outputencoding=s' =>	\$options{'outputenc'},
+
+		'help'	=>	\&usage,
+		'version' =>	\&print_version,
+		'debug' =>	sub { $Cz::Cstocs::DEBUG = 1; },
+
+		);
 	}
 
-$inputenc = shift unless defined $inputenc;
-$outputenc = shift unless defined $outputenc;
+elsif (@ARGV < 2)
+	{ usage(); }
 
-my $convert = new Cz::Cstocs $inputenc, $outputenc;
+my ($inputenc, $outputenc);
+if (defined $options{'inputenc'})
+	{ $inputenc = $options{'inputenc'}; delete $options{'inputenc'}; }
+else
+	{ $inputenc = shift; }
+
+if (defined $options{'outputenc'})
+	{ $outputenc = $options{'outputenc'}; delete $options{'outputenc'}; }
+else
+	{ $outputenc = shift; }
+
+my $tag;
+for $tag (keys %options)
+	{ delete $options{$tag} unless defined $options{$tag}; }
+
+print STDERR "Calling Cz::Cstocs $inputenc, $outputenc\n" if Cz::Cstocs::DEBUG;
+my $convert = new Cz::Cstocs $inputenc, $outputenc, %options;
+
+exit (1) unless defined $convert;
+
 while (<>)
 	{ print &$convert($_); }
 
