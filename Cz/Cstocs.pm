@@ -54,17 +54,17 @@ use vars qw($VERSION $DEBUG $DEFAULTCSTOCSDIR);
 
 $VERSION = '3.06';
 
-$DEBUG = 0;
+$DEBUG = 0 unless defined $DEBUG;
 sub DEBUG ()	{ $DEBUG; }
 
 # Directory that contains the encoding files
 $DEFAULTCSTOCSDIR = '/packages/share/cstocs/lib';
 
 # We will try to use the encoding files in the Perl directory tree
-if (defined $INC{'Cz::Cstocs.pm'})
+if (defined $INC{'Cz/Cstocs.pm'})
 	{
-	$DEFAULTCSTOCSDIR = $INC{'Cz::Cstocs.pm'};
-	$DEFAULTCSTOCSDIR =~ s!Cz::Cstocs.pm$!Cz/Cstocs/enc!;
+	$DEFAULTCSTOCSDIR = $INC{'Cz/Cstocs.pm'};
+	$DEFAULTCSTOCSDIR =~ s!Cz/Cstocs.pm$!Cz/Cstocs/enc!;
 	print STDERR "Using enc-dir $DEFAULTCSTOCSDIR from \@INC\n"
 		if DEBUG;
 	}
