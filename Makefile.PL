@@ -32,7 +32,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
 	NAME		=> 'Cz',
 	DISTNAME	=> 'Cstools',
-	VERSION		=> '0.152',
+	VERSION		=> '0.153',
 	PL_FILES	=> { 'bin/cstocs.PL' => 'bin/cstocs',
 					'bin/cssort.PL' => 'bin/cssort' },
 	EXE_FILES	=> [ 'bin/cstocs', 'bin/cssort' ],

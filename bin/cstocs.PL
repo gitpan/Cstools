@@ -11,7 +11,7 @@ print "Extracting $filename (with #! and variable substitution)\n";
 
 use Cz::Cstocs;
 print "Cz::Cstocs' version is $Cz::Cstocs::VERSION\n";
-print "Available encodings are ", join(" ", Cz::Cstocs::available_enc()), "\n";
+print "Available encodings: ", join(" ", Cz::Cstocs::available_enc()), "\n";
 
 print OUT <<"EOHEADER";
 $Config{'startperl'} -w

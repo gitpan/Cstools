@@ -1,6 +1,11 @@
 
 Revision history for Perl extension Cstools.
 
+0.153 Tue Mar  3 18:08:12 MET 1998
+	In Makefile.PL added bin/cssort to clean, spotted by Milan
+	Zamazal. Fix in Cstocs (3.164) to put the first occurence of
+	character label to output, spotted by Mirka Misakova.
+
 0.152 
 	diacritic_char added into Cz::Cstocs.
 

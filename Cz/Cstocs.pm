@@ -81,7 +81,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.163
+3.164
 
 =head1 SEE ALSO
 
@@ -130,7 +130,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, $class, @data);
 	} 
 
-$VERSION = '3.163';
+$VERSION = '3.164';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -213,8 +213,7 @@ sub load_encoding
 			$tag = pack "C", $tag;
 			}
 		$input->{$tag} = $desc;
-		$output->{$desc} = $tag
-				unless defined $output_hashes{$enc}{$desc};
+		$output->{$desc} = $tag unless defined $output->{$desc};
 		}
 	close FILE;
 
