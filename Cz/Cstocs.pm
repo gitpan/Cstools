@@ -1,12 +1,12 @@
 
 =head1 NAME
 
-Cz::tocz - conversions of charset encodings for the Czech language
+Cz::Cstocs - conversions of charset encodings for the Czech language
 
 =head1 SYNOPSIS
 
-	use Cz::tocz;
-	my $il2_to_ascii = new Cz::tocz 'il2', 'ascii';
+	use Cz::Cstocs;
+	my $il2_to_ascii = new Cz::Cstocs 'il2', 'ascii';
 	while (<>)
 		{ print &$il2_to_ascii($_); }
 
@@ -14,7 +14,7 @@ Cz::tocz - conversions of charset encodings for the Czech language
 
 This module helps in converting texts between various charset
 encodings, used for Czech and Slovak languages. The instance of the
-object B<Cz::tocz>, taking two parameters for input and output encoding,
+object B<Cz::Cstocs>, taking two parameters for input and output encoding,
 can be afterwards used as a function reference to convert strings. For
 backward compatibility, method I<conv> is supported as well, so the
 example above could also read
@@ -28,7 +28,7 @@ Currently the encodings included in this package are:
 
 	ascii cork il1 il2 kam koi8 pc2 vga 1250 
 
-the encoding files can be found in the F<Cz/tocz/enc> directory.
+the encoding files can be found in the F<Cz/Cstocs/enc> directory.
 
 =head1 AUTHOR
 
@@ -47,7 +47,7 @@ cstocs(1), perl(1).
 =cut
 
 
-package Cz::tocz;
+package Cz::Cstocs;
 
 no strict;
 use vars qw($VERSION $DEBUG $DEFAULTCSTOCSDIR);
@@ -61,10 +61,10 @@ sub DEBUG ()	{ $DEBUG; }
 $DEFAULTCSTOCSDIR = '/packages/share/cstocs/lib';
 
 # We will try to use the encoding files in the Perl directory tree
-if (defined $INC{'Cz::tocz.pm'})
+if (defined $INC{'Cz::Cstocs.pm'})
 	{
-	$DEFAULTCSTOCSDIR = $INC{'Cz::tocz.pm'};
-	$DEFAULTCSTOCSDIR =~ s!Cz::tocz.pm$!Cz/tocz/enc!;
+	$DEFAULTCSTOCSDIR = $INC{'Cz::Cstocs.pm'};
+	$DEFAULTCSTOCSDIR =~ s!Cz::Cstocs.pm$!Cz/Cstocs/enc!;
 	print STDERR "Using enc-dir $DEFAULTCSTOCSDIR from \@INC\n"
 		if DEBUG;
 	}
@@ -122,7 +122,7 @@ sub new
 	{
 	my $class = shift;
 	my ($inputenc, $outputenc) = (shift, shift);
-	print STDERR "Loading Cz::tocz for $inputenc, $outputenc\n" if DEBUG;
+	print STDERR "Loading Cz::Cstocs for $inputenc, $outputenc\n" if DEBUG;
 
 	my (%options) = @_;
 
