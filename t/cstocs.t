@@ -2,7 +2,7 @@
 ###
 # Cz::Cstocs.pm
 
-BEGIN { $| = 1; print "1..15\n"; }
+BEGIN { $| = 1; print "1..20\n"; }
 END {print "not ok 1\n" unless $loaded_cstocs;}
 
 ###
@@ -132,4 +132,43 @@ print "Got '$result9'\n";
 
 print "not " if $result9 ne "\\v z\\'\\i{}\\v zala";
 print "ok 15\n";
+
+###
+
+print "Testing correct behaviour of one_by_one\nFirst without it\n";
+
+my $_1250_to_il2 = new Cz::Cstocs '1250', 'il2' or print 'not ';
+print "ok 16\n";
+
+print "Expecting -- --- (TM)\n";
+my $result17 = $_1250_to_il2->conv("\226 \227 \231");
+print "Got '$result17'\n";
+
+print 'not ' if $result17 ne '-- --- (TM)';
+print "ok 17\n";
+
+###
+
+print "And now one_by_one and also fillstring set\n";
+
+$_1250_to_il2 = new Cz::Cstocs '1250', 'il2', 'one_by_one' => 1,
+		'fillstring' => '?' or print 'not ';
+print "ok 18\n";
+
+print "Expecting '   '\n";
+my $result19 = $_1250_to_il2->conv("\226\227\231");
+print "Got '$result19'\n";
+
+print 'not ' if $result19 ne '???';
+print "ok 19\n";
+
+###
+
+print "Test use Cz::Cstocs _1250_il2; _1250_il2(\212)\n";
+
+use Cz::Cstocs '_1250_il2';
+
+my $result20 = _1250_il2("\212");
+printf "Got %o\nnot ", ord($result20) if $result20 ne "©";
+print "ok 20\n";
 

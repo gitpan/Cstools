@@ -53,7 +53,7 @@ newer) versions, please let me know and I try to fix them.
 
 =head1 VERSION
 
-0.65
+0.66
 
 =head1 SEE ALSO
 
@@ -86,7 +86,7 @@ use vars qw( @ISA @EXPORT $VERSION $DEBUG );
 #
 @EXPORT = qw( czsort czcmp cssort cscmp );
 
-$VERSION = '0.65';
+$VERSION = '0.66';
 $DEBUG = 0;
 sub DEBUG	{ $DEBUG; }
 

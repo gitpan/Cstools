@@ -7,11 +7,7 @@ my $filename = $0;
 $filename =~ s/\.PL$//;
 open OUT,">$filename" or die "Can't create $filename: $!";
 chmod(0755, $filename);
-print "Extracting $filename (with #! and variable substitution)\n";
-
-use Cz::Cstocs;
-print "Cz::Cstocs' version is $Cz::Cstocs::VERSION\n";
-print "Available encodings: ", join(" ", Cz::Cstocs::available_enc()), "\n";
+print "Extracting $filename (with #! substitution)\n";
 
 print OUT <<"EOHEADER";
 $Config{'startperl'} -w
@@ -50,13 +46,8 @@ standard input, assumes that the input is encoded in C<src_encoding>
 and ties to reencode it into C<dst_encoding>. The result is written to
 the standard output.
 
-Encodings currently supported are
-
-EOBODY
-
-print OUT "\t", join(" ", Cz::Cstocs::available_enc()), "\n";
-
-print OUT <<'EOBODY';
+Run C<cstocs> without parameters to get short help and list of
+available encodings.
 
 Characters that are not defined in C<src_encoding> are passed to the
 output unchanged.
@@ -72,14 +63,18 @@ you may want to do one of the following actions:
 
 =item 1.
 
-Do not produce any output instead of "ecaron" symbol, option C<--null>.
+Keep it the same, option C<--nofillstring>.
 
 =item 2.
+
+Do not produce any output instead of "ecaron" symbol, option C<--null>.
+
+=item 3.
 
 Substitute some string (possibly a space) instead of both ecaron and
 dcaron, options C<--fillstring>.
 
-=item 3.
+=item 4.
 
 Substitute a letter "d" instead of dcaron, and "e" instead of ecaron.
 It is even possible to substitute string instead of symbol, so you can
@@ -107,6 +102,12 @@ C<src_encoding> but not in the C<dst_encoding> nor in the F<accent>
 file (or F<accent> file is not used), it is replaced by C<string>.
 The default is single space.
 
+=item --nofillstring
+
+Disable changes of characters that would otherwise have fillstring
+applied. This is different from C<--null> because that cancels that
+character out.
+
 =item --null
 
 Completely equivalent to --fillstring "".
@@ -126,14 +127,6 @@ rewritten to "AE" string.
 
 Use all rules from accent file. This is the default option.
 
-=head1 VERSION
-
-EOBODY
-
-print OUT "$Cz::Cstocs::VERSION\n";
-
-print OUT <<'EOBODY';
-
 =head1 SEE ALSO
 
 Cz::Cstocs(3).
@@ -150,12 +143,14 @@ use strict;
 use Cz::Cstocs;
 
 sub usage {
-	print STDERR <<"EOF";
+	print_version();
+	print STDERR <<EOF;
 Usage: cstocs [options] inputencoding outputencoding [ files ... ]
   where [options] can be
     --dir=string	Alternate directory with encoding and accent files.
     --fillstring=str	String that will replace unconvertable characters.
     --null		Equivalent to --fillstring=""
+    --nofillstring	Keep unconvertable unconverted.
     --nochange, --noaccent	Do not use accent file at all.
     --onebyone		Use only one-by-one character rules from accent file.
     --onebymore		Use all entries from the accent file.
@@ -163,14 +158,15 @@ Usage: cstocs [options] inputencoding outputencoding [ files ... ]
     --debug		Print out debugging info while processing.
 Input and output encodings can also be specified using --inputencoding
 and --outputencoding options. See man page for detailed description.
+Encodings available are:
 EOF
-exit;
+	print STDERR "\t@{[ &Cz::Cstocs::available_enc() ]}\n";
+	exit;
 }
 
 sub print_version
 	{
 	print STDERR "This is cstocs version $Cz::Cstocs::VERSION.\n";
-	exit 0;
 	}
 
 # Out defaults are
@@ -198,7 +194,7 @@ if (grep { /--/ } @ARGV)
 		'outputencoding=s' =>	\$options{'outputenc'},
 
 		'help'	=>	\&usage,
-		'version' =>	\&print_version,
+		'version' =>	sub { print_version(); exit 0; },
 		'debug' =>	sub { $Cz::Cstocs::DEBUG = 1; },
 
 		);

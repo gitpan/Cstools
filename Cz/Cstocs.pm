@@ -81,7 +81,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.164
+3.166
 
 =head1 SEE ALSO
 
@@ -115,8 +115,9 @@ sub import
 		my $fn;
 		for $fn (@data)
 			{
+			local $^W = 0;
 			next if grep { $_ eq $fn } @EXPORT_OK;
-			my ($in, $out) = $fn =~ /^(.*?)_(?:to_)?(.*)$/;
+			my ($in, $out) = $fn =~ /^_(.*?)_(?:to_)?(.*)$/;
 			next unless defined $out;
 			my $fnref = new Cz::Cstocs $in, $out;
 			die "Definition of $fn failed\n"
@@ -130,7 +131,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, $class, @data);
 	} 
 
-$VERSION = '3.164';
+$VERSION = '3.166';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -364,7 +365,7 @@ sub new
 		return;
 		}
 
-	# Defaults of options
+	# Default options
 	my $fillstring = ' ';
 	my $use_fillstring = 1;
 	my $use_accent = 1;
@@ -373,22 +374,19 @@ sub new
 	# this is exception for TeX
 	$use_fillstring = 0 if $inputenc eq "tex";
 
-	# process additional options
-	if (@_)
+	my %opts = @_;
+	my ($tag, $value);
+	while (($tag, $value) = each %opts)
 		{
-		print STDERR "Other options: '@_'\n" if DEBUG;
-		my $tag;
-		while (defined($tag = shift))
-			{
-			my $value = shift;
-			$tag eq 'fillstring' and $fillstring = $value;
-			$tag eq 'use_accent' and
-				$use_accent = (defined $value ? $value : 0);
-			$tag eq 'nofillstring' and
-				$use_fillstring = (defined $value ?
-					( $value ? 0 : 1) : 0);
-			$tag eq 'cstocsdir' and $cstocsdir = $value;	
-			}
+		print STDERR "Option: $tag = '$value'\n" if DEBUG;
+		$tag eq 'fillstring' and $fillstring = $value;
+		$tag eq 'use_accent' and
+			$use_accent = (defined $value ? $value : 0);
+		$tag eq 'nofillstring' and
+			$use_fillstring = (defined $value ?
+				( $value ? 0 : 1) : 0);
+		$tag eq 'cstocsdir' and $cstocsdir = $value;	
+		$tag eq 'one_by_one' and $one_by_one = $value;	
 		}
 
 	# encode settings into the function name

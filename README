@@ -16,9 +16,10 @@ Readme pro distribuci Cstools:
 	Modul Cz::Cstocs:
 
 		Objekt, pomocí nìho¾ je mo¾no konvertovat mezi
-		znakovými sadami bez nutnosti vnìj¹ího programu. Nyní
-		také s mo¾ností pøímých konverzních funkcí.
-
+		znakovými sadami bez nutnosti vnìj¹ího programu -- buï
+		formou objektovou, nebo pøímými konverzními funkcemi.
+		Jednou ze znakových sad je i sada tex, tedy napø. \v{c}.
+		
 	Program cstocs:
 
 		Tato verze konverzího programu cstocs je zalo¾ena na
@@ -41,8 +42,9 @@ Readme file for Cstools distribution:
 	Module Cz::Cstocs:
 
 		Implements object for various charset encodings, used
-		for the Czech language. Also implements direct
-		conversion functions.
+		for the Czech language -- either as objects, or as
+		direct conversion functions. One of the charsets is
+		tex for things like \v{c}.
 	
 	Program cstocs:
 
@@ -58,18 +60,29 @@ Readme file for Cstools distribution:
 		internals cmp and sort.
 
 Installation:
+	Download the tar.gz, unpack it, change to the Cstools-*
+	directory. Then do
 
-	perl Makefile.PL
-	make
-	make test
-	make install
+		perl Makefile.PL
+		make
+		make test
+		make install
+
+	or you can use CPAN module and just type "install Cz::Cstocs".
+
+Ideas, bug reports:
+	Any comments or bug reports concerning this module can be send
+	to my e-mail address. Sending message to clpm is OK but send
+	a copy to me since I might miss your post. Please provide as
+	much information as possible, including version of Perl and
+	this module, and mention "Cstocs" in the Subject -- it will
+	help me solve the problem faster.
 
 Available:
-
-	http://www.fi.muni.cz/~adelton/perl/ and on your favorite CPAN
-	site (http://www.perl.com/perl/CPAN/).
-
-Copyright: (c) 1997 Jan Pazdziora, adelton@fi.muni.cz. All rights
+	http://www.fi.muni.cz/~adelton/perl/ and from your favorite
+	CPAN site in the authors/id/JANPAZ/ directory.
+	
+Copyright: (c) 1997--1998 Jan Pazdziora, adelton@fi.muni.cz. All rights
 	reserved. This library is free software; you can redistribute
 	it and/or modify it under the same terms as Perl itself.
 

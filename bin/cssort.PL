@@ -5,7 +5,7 @@ my $filename = $0;
 $filename =~ s/\.PL$//;
 open OUT,">$filename" or die "Can't create $filename: $!";
 chmod(0755, $filename);
-print "Extracting $filename (with #! and variable substitution)\n";
+print "Extracting $filename (with #! substitution)\n";
 
 print OUT <<"EOHEADER";
 $Config{'startperl'} -w

@@ -1,6 +1,15 @@
 
 Revision history for Perl extension Cstools.
 
+0.155 Mon Aug 17 17:23:03 MET DST 1998
+	Cstocs (3.166): Added mu to accent file. Added possibility
+	use Cz::Cstocs '_1250_il2';
+
+0.154 Thu Jul  9 16:05:14 MET DST 1998
+	Cstocs (3.165): Fixed bug that caused ignoring the --onebyone
+	flag.  Help page of cstocs now lists available encodings
+	instead of the man page.
+
 0.153 Tue Mar  3 18:08:12 MET 1998
 	In Makefile.PL added bin/cssort to clean, spotted by Milan
 	Zamazal. Fix in Cstocs (3.164) to put the first occurence of
