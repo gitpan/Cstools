@@ -1,6 +1,10 @@
 
 Revision history for Perl extension Cstools.
 
+0.173 Tue Sep  5 14:38:28 MET DST 2000
+	Added the pc2a encoding that maps semigraphics to ASCII art.
+	Provided by Radim Gelner of SuSE CR.
+
 0.1772 Thu Aug  3 17:28:38 MET DST 2000
 	The dbfcstocs.t test fails if XBase module is not installed,
 	found out by Mr. Schinder.

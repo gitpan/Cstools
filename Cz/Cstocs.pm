@@ -45,7 +45,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, '_stupidity_workaround', @data);
 	} 
 
-$VERSION = '3.190';
+$VERSION = '3.191';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
