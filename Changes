@@ -1,6 +1,10 @@
 
 Revision history for Perl extension Cstools.
 
+0.170 Sun Jun 13 17:17:38 MET DST 1999
+	Fixed incompatibility introduced by the Exporter coming with
+	the 5.004_05* version of Perl, distributed (at least) with RH.
+
 0.161 Wed May 19 10:36:54 MET DST 1999
 	Fixed error by one in Cz::Time -- month handling, spotted by
 	Lukas Hejtmanek.

@@ -3,7 +3,7 @@ use Config;
 
 use ExtUtils::MakeMaker;
 
-my $VERSION = '0.161';
+my $VERSION = '0.170';
 
 sub MY::dist {
 	package MY; # so that "SUPER" works right

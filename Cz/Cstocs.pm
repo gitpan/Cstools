@@ -13,8 +13,11 @@ use Exporter;
 use vars qw( $VERSION $DEBUG $cstocsdir @ISA @EXPORT_OK %EXPORT $errstr);
 
 @ISA = qw(Exporter);
-@EXPORT_OK = ();
-%EXPORT = ();
+@EXPORT_OK = ( '_stupidity_workaround' );
+%EXPORT = ( '_stupidity_workaround' => 1 );
+
+sub _stupidity_workaround {
+	}
 
 sub import
 	{
@@ -39,10 +42,10 @@ sub import
 			$EXPORT{$fn} = 1;
 			}
 		}
-	Cz::Cstocs->export_to_level(1, $class, @data);
+	Cz::Cstocs->export_to_level(1, '_stupidity_workaround', @data);
 	} 
 
-$VERSION = '3.171';
+$VERSION = '3.180';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
