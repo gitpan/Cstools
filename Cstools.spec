@@ -1,13 +1,15 @@
 Summary: Czech laguage tools
+Summary(cs): Nástroje pro práci s èeským jazykem (koverze kódování, tøídìní)
 Name: cstools
-Version: 3.2
+Version: 3.3
 Release: 1
 Group: Applications/Text
-Source: Cstools-3.2.tar.gz
+Group(cs): Aplikace/Text
+Source: Cstools-%{version}.tar.gz
 URL: http://www.fi.muni.cz/~adelton/perl/
 Copyright: 1997--2002 Jan Pazdziora, adelton@fi.muni.cz.
 Buildroot: /tmp/cstools-root
-Packager: Milan Kerslager <milan.kerslager@spsselib.hiedu.cz>
+Packager: Milan Kerslager <kerslage@linux.cz>
 
 %description
 This package includes modules that are usefull when dealing with
@@ -49,7 +51,7 @@ Modul Cz::Sort:
 
 %prep
 
-%setup -n Cstools-3.2
+%setup -n Cstools-%{version}
 
 %build
 
@@ -59,16 +61,14 @@ make test
 
 %install
 
-/bin/rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr
 
 # make install wants to append to perllocal.pod which is politically
 # incorrect behaviour; let's disable it: it's RPM that is supposed to
 # keep track of installed software
 
-make \
-	PREFIX=$RPM_BUILD_ROOT/usr \
-	INSTALLMAN1DIR=$RPM_BUILD_ROOT/usr/man/man1 \
+make	PREFIX=$RPM_BUILD_ROOT/usr \
 	DOC_INSTALL="-#" \
 	install
 
@@ -83,12 +83,14 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 /usr/bin/*
-/usr/man/man[0-9]/*
-/usr/lib/perl5/man/man3/*
-/usr/lib/perl5/site_perl/Cz/*
+/usr/lib/perl5/site_perl/*/Cz/*
+%{_mandir}/man[0-9]/*
 %doc Changes README
 
 %changelog
+* Fri Dec  1 2000, included Fri Jun 28 2002 Milan Kerslager <kerslage@linux.cz>
+- fixes for 7.0
+
 * Thu Jul 15 1999 Milan Kerslager <milan.kerslager@spsselib.hiedu.cz>
 - added descriptions (en, cs)
 

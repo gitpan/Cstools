@@ -73,6 +73,23 @@ my ($convert, $options) = Cz::Cstocs::Getopt::process_argv(
 	'memofile=s' => 'memofile',
 	'memosep=s' => 'memosep',
 	'nomemo' => 'ignorememo',
+	'help' => sub {
+		print "This is dbfcstocs version $Cz::Cstocs::VERSION.\n";
+		print STDERR <<EOF;
+Usage: dbftocstocs [options] inputenc outputenc [ in.dbf out.dbf ... ]
+  where options can be
+    --field-names-charset=charset	Convert field names to this charset.
+    --memofile=str	Name of the memo (dbt, fpt) file.
+    --nomemo		Do not open the memo file.
+    --memosep		See dbfdump(1), you probably don't need this.
+  and reasonable options of cstocs (see cstocs --help), most notably
+  -i doesn't work in dbfcstocs. After the encoding specifications,
+  pairs of input and output dbf file names should follow.
+Available encodings are:
+  @{[ &Cz::Cstocs::available_enc() ]}
+EOF
+		exit;
+		},
 	}
 	);
 

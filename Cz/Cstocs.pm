@@ -44,7 +44,7 @@ sub import {
 	Cz::Cstocs->export_to_level(1, '_stupidity_workaround', @data);
 } 
 
-$VERSION = '3.2';
+$VERSION = '3.3';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -244,8 +244,8 @@ sub load_accent {
 
 	local $_;
 	while (<FILE>) {
-		next if /^(#|\s*$)/;
-		my ($key, $val) = /^\s*(\S+)\s+(\S+)\s*$/;
+		next if /^\s*(#|$)/;
+		my ($key, $val) = /^\s*(\S+)\s+(.+?)\s*$/;
 		unless (defined $key and defined $val) {
 			chomp;
 			warn "Syntax error in $file at line $: `$_'.\n";
@@ -278,6 +278,23 @@ sub normalize_enc_name {
 	my $enc = lc shift;
 	$enc =~ s/[^a-z0-9]//g;
 	( defined $alias{$enc} ? $alias{$enc} : $enc );	
+}
+
+# Recursively lookup the target
+sub lookup_accent {
+	my ($outenc, $accent, $in) = @_;
+	my @target = split /\s+/, $in;
+	my $out = '';
+	for my $desc (@target) {
+		if (defined $outenc->{$desc}) {
+			$out .= $outenc->{$desc};
+		} elsif (defined $accent->{$desc}) {
+			$out .= lookup_accent($outenc, $accent, $accent->{$desc});
+		} else {
+			die;
+		}
+	}
+	return $out;
 }
 
 # Constructor -- takes two arguments, input and output encodings,
@@ -346,10 +363,19 @@ sub new {
 		
 		if (not defined $output and $use_accent) {
 			# Doesn't have friend in output encoding
-			$output = $accent{$desc};
-			$output = undef if $one_by_one and
-				(length $key == 1 and defined $output
-					and length $output != 1);
+
+
+			$output = eval {
+				lookup_accent($output_hashes{$outputenc},
+				\%accent, $accent{$desc}) if defined $accent{$desc};
+				};
+			if ($@) {
+				$errstr = "Error processing translitaration for $inputenc -> $outputenc for character $desc.\n";
+				return;
+			}
+
+			$output = undef if $one_by_one and defined $output
+				and length $key < length $output;
 		}
 		if (not defined $output and $use_fillstring) {
 			$output = $fillstring;
@@ -536,11 +562,12 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.2
+3.3
 
 =head1 SEE ALSO
 
-cstocs(1), perl(1).
+cstocs(1), perl(1), or Xcstocs at
+http://www.lut.fi/~kurz/programs/xcstocs.tar.gz.
 
 =cut
 

@@ -9,22 +9,23 @@ sub usage {
 	print_version();
 	print STDERR <<EOF;
 Usage: cstocs [options] inputencoding outputencoding [ files ... ]
-  where [options] can be
+  where options can be
     -i[.ext]		In-place substitution; must be the first parameter.
     --dir=string	Alternate directory with encoding and accent files.
-    --fillstring=str	String that will replace unconvertable characters.
+    --fillstring=str	String that will replace unconvertable characters,
+			the default is one space.
     --null		Equivalent to --fillstring=""
     --nofillstring	Keep unconvertable unconverted.
-    --nochange, --noaccent	Do not use accent file at all.
+    --onebymore		Use all entries from the accent file (the default).
     --onebyone		Use only one-by-one character rules from accent file.
-    --onebymore		Use all entries from the accent file.
+    --nochange, --noaccent	Do not use accent file at all.
     --version		Print out the version information.
     --debug		Print out debugging info while processing.
 Input and output encodings can also be specified using --inputencoding
 and --outputencoding options. See man page for detailed description.
-Encodings available are:
+Available encodings are:
+  @{[ &Cz::Cstocs::available_enc() ]}
 EOF
-	print STDERR "\t@{[ &Cz::Cstocs::available_enc() ]}\n";
 	exit;
 }
 

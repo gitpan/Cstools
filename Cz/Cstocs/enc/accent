@@ -1,4 +1,4 @@
-AE		AE
+AE		A E
 Aabovedot	A
 Aacute		A
 Abreve		A
@@ -9,7 +9,7 @@ Amacron         A
 Aogonek		A
 Aring		A
 Atilde		A
-CH		CH
+CH		C H
 Cacute		C
 Ccaron		C
 Ccedilla	C
@@ -25,7 +25,7 @@ Eogonek		E
 Eth		D
 Gbreve		G
 Gcedilla        G
-IJ		IJ
+IJ		I J
 Iabovedot	I
 Iacute		I
 Icircumflex	I
@@ -42,7 +42,7 @@ Nacute		N
 Ncaron		N
 Ncedilla        N
 Ntilde		N
-OE		OE
+OE		O E
 Oacute		O
 Ocircumflex	O
 Odiaeresis	O
@@ -52,14 +52,14 @@ Omacron         O
 Ooblique	O
 Ostroke         O
 Otilde		O
-Pt		Pt
+Pt		P t
 Racute		R
 Rcaron		R
 Rcedilla        R
 Sacute		S
 Scaron		S
 Scedilla	S
-Ssharp		SS
+Ssharp		S S
 Tcaron		T
 Tcedilla	T
 Uacute		U
@@ -79,31 +79,31 @@ aabovedot	a
 aacute		a
 abreve		a
 acircumflex	a
-acute		'
+acute		quoteright
 adiaeresis	a
-ae		ae
+ae		a e
 agrave		a
 amacron		a
-anglequoteleftsingle	<
-anglequoterightsingle	>
+anglequoteleftsingle	less
+anglequoterightsingle	greater
 aogonek		a
 aring		a
 atilde		a
 aunderscore	a
-brokenbar	|
-bullet		*
+brokenbar	bar
+bullet		asterisk
 cacute		c
 ccaron		c
 ccedilla	c
 cent		c
 ch		c
-copyright	(c)
-dagger		|
+copyright	parenleft c parenright
+dagger		bar
 dcaron		d
-diaeresis	"
-division	/
-doubleacute	"
-doubledagger	|
+diaeresis	quotedbl
+division	slash
+doubleacute	quotedbl
+doubledagger	bar
 eabovedot       e
 eacute		e
 ecaron		e
@@ -111,77 +111,77 @@ ecircumflex	e
 ediaeresis	e
 egrave		e
 emacron         e
-emdash		---
-endash		--
+emdash		minus minus minus
+endash		minus minus
 eogonek		e
 eth		d
-exclamdown	!
-fi              fi
-fl              fl
+exclamdown	exclam
+fi              f i
+fl              f l
 forte		f
-fraction	/
+fraction	slash
 gacute          g
 gbreve		g
-greaterequal	>=
-guillemotleft	>>
-guillemotright	<<
-hyphen		-
+greaterequal	greater equal
+guillemotleft	greater greater
+guillemotright	less less
+hyphen		minus
 iacute		i
 icircumflex	i
 idiaeresis	i
 idotless        i
 igrave		i
-ij		ij
+ij		i j
 imacron         i
 iogonek         i
 kcedilla        k
 lacute		l
 lcaron		l
 lcedilla        l
-lowerequal	<=
+lowerequal	less equal
 lstroke		l
 mu		u
-multiply	.
+multiply	period
 nacute		n
 ncaron		n
 ncedilla        n
-notequal	!=
-notsign		not
+notequal	exclam equal
+notsign		n o t
 ntilde		n
 oacute		o
 ocircumflex	o
 odiaeresis	o
 odoubleacute	o
-oe		oe
+oe		o e
 ograve		o
 omacron         o
-onehalf		1/2
-onequarter	1/4
+onehalf		1 slash 2
+onequarter	1 slash 4
 oslash		o
 otilde		o
 ounderscore	o
 partaildifferential	d
-period3		...
-periodcentered	.
-permille	o/oo
-plusminus	+/-
-questiondown	?
-quoteleftdouble	"
-quotelowdouble	"
-quotelowsingle	'
+period3		period period period
+periodcentered	period
+permille	o slash o o
+plusminus	plus slash minus
+questiondown	question
+quoteleftdouble	quotedbl
+quotelowdouble	quotedbl
+quotelowsingle	quoteright
 racute		r
 rcaron		r
 rcedilla        r
-registered	(r)
+registered	parenleft r parenright
 sacute		s
 scaron		s
 scedilla	s
-ssharp		ss
+ssharp		s s
 sterling	L
 tcaron		t
 tcedilla	t
-threequarters	3/4
-trademark	(TM)
+threequarters	3 slash 4
+trademark	parenleft T M parenright
 uacute		u
 ucircumflex	u
 udiaeresis	u
@@ -196,6 +196,6 @@ yen		y
 zabovedot	z
 zacute		z
 zcaron		z
-apostrophe	'
-tilde		~
-grave		`
+apostrophe	quoteright
+tilde		asciitilde
+grave		quoteleft
