@@ -24,21 +24,18 @@ example above could also read
 
 The conversion function takes string and returns string.
 
-Currently the encodings included in this package are:
-
-	ascii cork il1 il2 kam koi8 pc2 vga 1250 
-
-the encoding files can be found in the F<Cz/Cstocs/enc> directory.
+The encoding files are in the F<Cz/Cstocs/enc> directory but this
+location can be changed with the I<CSTOCSDIR> environment variable.
 
 =head1 AUTHOR
 
-Jan Pazdziora, adelton@fi.muni.cz created the module version.
+Jan Pazdziora, adelton@fi.muni.cz, created the module version.
 
 Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.10
+3.13
 
 =head1 SEE ALSO
 
@@ -50,37 +47,46 @@ cstocs(1), perl(1).
 package Cz::Cstocs;
 
 no strict;
-use vars qw($VERSION $DEBUG $DEFAULTCSTOCSDIR);
+use vars qw($VERSION $DEBUG $DEFAULTCSTOCSDIR $cstocsdir $fillstring
+	$use_accent $one_by_more);
 
-$VERSION = '3.10';
+$VERSION = '3.13';
 
 $DEBUG = 0 unless defined $DEBUG;
 sub DEBUG ()	{ $DEBUG; }
 
-# Directory that contains the encoding files
-$DEFAULTCSTOCSDIR = '/packages/share/cstocs/lib';
+# Where to get the encoding files from
 
-# We will try to use the encoding files in the Perl directory tree
-if (defined $INC{'Cz/Cstocs.pm'})
-	{
-	$DEFAULTCSTOCSDIR = $INC{'Cz/Cstocs.pm'};
-	$DEFAULTCSTOCSDIR =~ s!Cz/Cstocs.pm$!Cz/Cstocs/enc!;
-	print STDERR "Using enc-dir $DEFAULTCSTOCSDIR from \@INC\n"
-		if DEBUG;
-	}
-
-my $cstocsdir = $DEFAULTCSTOCSDIR;
+# Either look at the environment variable
 if (defined $ENV{'CSTOCSDIR'})
 	{
 	$cstocsdir = $ENV{'CSTOCSDIR'};
 	print STDERR "Using enc-dir $cstocsdir from the CSTOCSDIR env-var\n"
 		if DEBUG;
 	}
+# Or take the encoding files from the Perl tree
+elsif (defined $INC{'Cz/Cstocs.pm'})
+	{
+	$DEFAULTCSTOCSDIR = $INC{'Cz/Cstocs.pm'};
+	$DEFAULTCSTOCSDIR =~ s!\.pm$!/enc!;
+	print STDERR "Using enc-dir $DEFAULTCSTOCSDIR from \@INC\n"
+		if DEBUG;
+	}
+# Or fail back to default
+else
+	{
+	$DEFAULTCSTOCSDIR = '/packages/share/cstocs/lib';
+	}
 
+$cstocsdir = $DEFAULTCSTOCSDIR unless defined $cstocsdir;
+
+# These options can be changed for different behavior
+$fillstring = ' ' unless defined $fillstring;
+$use_accent = 1 unless defined $use_accent;
+$one_by_more = 1 unless defined $one_by_more;
+
+# Hash that holds the accent file
 my %accent = ();
-my $fillstring = ' ';
-my $use_accent = 1;
-my $one_by_more = 1;
 
 sub load_encoding
 	{
@@ -118,6 +124,7 @@ sub load_accent
 		}
 	close FILE;
 	}
+
 sub new
 	{
 	my $class = shift;
@@ -201,8 +208,14 @@ sub conv
 	my $self = shift;
 	return &$self($_[0]);
 	}
+sub available_enc
+	{
+	opendir DIR, $cstocsdir or die "Error reading $cstocsdir\n";
+	my @list = sort map { s/\.enc$//; $_ } grep { /\.enc$/ } readdir DIR;
+	closedir DIR;
+	return @list;
+	}
 
 1;
 
-__END__
 

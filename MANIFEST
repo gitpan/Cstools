@@ -15,6 +15,7 @@ INSTALL
 MANIFEST
 Makefile.PL
 README
+cstocs.old
 bin/cstocs.PL
 t/cssort.t
 t/cstocs.t

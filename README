@@ -5,7 +5,8 @@
 
 	Tools for dealing with Czech texts in Perl. I will be glad
 	if anybody suggests to make these methods more general,
-	including more languages and/or charsets.
+	including more languages and/or charsets. Maybe we should put
+	these into the Convert:: namespace?
 
 Readme pro distribuci Cstools:
 
@@ -29,6 +30,7 @@ Readme pro distribuci Cstools:
 		na pou¾itých locales, proto¾e kdo má správné locales,
 		¾e? Exportuje funkce czcmp a czsort, které pracují
 		podobnì jako perlovské vestavìné cmp a sort.
+
 
 Readme file for Cstools distribution:
 

@@ -23,8 +23,6 @@ EOHEADER
 
 print OUT <<'EOBODY';
 
-use vars qw( $running_under_some_shell );
-
 =head1 NAME
 
 cstocs -- charset encoding convertor for the Czech and Slovak languages.
@@ -73,12 +71,12 @@ you may want to do one of the following actions:
 
 =item 1.
 
-Do not produce any output instead of "ecaron" symbol, option C<--null>.
+Do not produce any output instead of "ecaron" symbol.
 
 =item 2.
 
 Substitute some string (possibly a space) instead of both ecaron and
-dcaron, options C<--fillstring>.
+dcaron.
 
 =item 3.
 
@@ -105,14 +103,13 @@ but the --dir option has the highest priority.
 
 If source text contains character, that is defined in the
 C<src_encoding> but not in the C<dst_encoding> nor in the F<accent>
-file (or F<accent> file is not used), it is replaced by C<string>.
-The default is single space.
+file, it is replaced by C<string>. The default is single space.
 
 =item --null
 
 Completely equivalent to --fillstring "".
 
-=item --nochange or --noaccent
+=item --nochange
 
 Do not use the F<accent> file at all.
 
@@ -125,7 +122,7 @@ rewritten to "AE" string. This is the default option.
 
 =item --onebymore
 
-Use all rules from accent file (default).
+Use all rules from accent file.
 
 =head1 VERSION
 
@@ -147,10 +144,62 @@ Jan Pazdziora, adelton@fi.muni.cz, created the Perl module version.
 
 =cut
 
-use strict;
 use Cz::Cstocs;
+use strict;
 
-package Cz::Cstocs;
+my ($inputenc, $outputenc);
+my ($fillstring, $cstocsdir, $one_by_more, $use_accent, $debug)
+	= (undef, undef, 1, 1, 0);
+
+if (grep { /--/ } @ARGV)
+	{
+	## print STDERR "Using Getopt::Long\n";
+	require Getopt::Long;
+	Getopt::Long::GetOptions(
+		'null' =>	sub { $fillstring = ''; },
+		'fillstring=s' =>	\$fillstring,
+		'onebyone' =>	sub { $one_by_more = 0; },
+		'onebymore' =>	\$one_by_more,
+		'nochange',	sub { $use_accent = 0; },
+		'dir=s' =>	\$cstocsdir,
+		'inputencoding=s' =>	\$inputenc,
+		'outputencoding=s' =>	\$outputenc,
+		'help'	=>	\&usage,
+		'version' =>	sub {print STDERR "This is cstocs version $Cz::Cstocs::VERSION.\n"; exit 0; },
+		'debug' =>	\$debug,
+		);
+	if ($debug)
+		{ $Cz::Cstocs::DEBUG = 1; }
+	if (defined $fillstring)
+		{
+		$Cz::Cstocs::fillstring = $fillstring;
+		print STDERR "Setting fillstring to '$Cz::Cstocs::fillstring' from command line\n" if Cz::Cstocs::DEBUG;
+		}
+	if (defined $cstocsdir)
+		{
+		$Cz::Cstocs::cstocsdir = $cstocsdir;
+		print STDERR "Setting enc-dir $Cz::Cstocs::cstocsdir from command line\n" if Cz::Cstocs::DEBUG;
+		}
+	if ($one_by_more != 1)
+		{
+		$Cz::Cstocs::one_by_more = $one_by_more;
+		print STDERR "Setting one_by_more to $Cz::Cstocs::one_by_more from command line\n" if Cz::Cstocs::DEBUG;
+		}
+	if ($use_accent != 1)
+		{
+		$Cz::Cstocs::use_accent = $use_accent;
+		print STDERR "Setting use_accent to $Cz::Cstocs::use_accent from command line\n" if Cz::Cstocs::DEBUG;
+		}
+	}
+elsif (@ARGV < 2)
+	{ usage(); }
+
+$inputenc = shift unless defined $inputenc;
+$outputenc = shift unless defined $outputenc;
+
+my $convert = new Cz::Cstocs $inputenc, $outputenc;
+while (<>)
+	{ print &$convert($_); }
 
 sub usage {
 	print STDERR <<"EOF";
@@ -166,7 +215,7 @@ Usage: cstocs [options] inputencoding outputencoding [ files ... ]
 	defined in the output encoding nor in the accent file will be
 	replaced by this string (default is single space).
     --help	Prints out this message.
-    --nochange, --noaccent	Do not use accent file at all.
+    --nochange	Do not use accent file at all.
     --null	Equivalent to --fillstring=""
     --onebyone	Use only those entries from the accent file, which will
 	cause replacing of one character by exactly one character (this is
@@ -176,45 +225,5 @@ Usage: cstocs [options] inputencoding outputencoding [ files ... ]
 EOF
 exit;
 }
-
-sub print_version
-	{
-	print STDERR "This is cstocs version $Cz::Cstocs::VERSION.\n";
-	exit 0;
-	}
-
-BEGIN
-	{
-	use vars qw( $fillstring $one_by_more $use_accent $cstocsdir
-		$DEBUG $inputenc $outputenc);
-	if (grep { /--/ } @ARGV)
-		{
-		## print STDERR "Using Getopt::Long\n";
-		require Getopt::Long;
-		Getopt::Long::GetOptions(
-			'null' =>	sub { $fillstring = ''; },
-			'fillstring=s' =>	\$fillstring,
-			'onebyone' =>	sub { $one_by_more = 0; },
-			'onebymore' =>	sub { $one_by_more = 1; },
-			'noaccent',	sub { $use_accent = 0; },
-			'nochange',	sub { $use_accent = 0; },
-			'dir=s' =>	\$cstocsdir,
-			'inputencoding=s' =>	\$inputenc,
-			'outputencoding=s' =>	\$outputenc,
-			'help'	=>	\&usage,
-			'version' =>	\&print_version,
-			'debug' =>	\$DEBUG,
-			);
-		}
-	elsif (@ARGV < 2)
-		{ usage(); }
-	}
-
-$inputenc = shift unless defined $inputenc;
-$outputenc = shift unless defined $outputenc;
-
-my $convert = new Cz::Cstocs $inputenc, $outputenc;
-while (<>)
-	{ print &$convert($_); }
 
 EOBODY

@@ -310,6 +310,3 @@ sub czsort
 
 1;
 
-__END__
-
-
