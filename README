@@ -1,20 +1,56 @@
 
+			-----------------------
+				Cstools
+			-----------------------
+
+	Tools for dealing with Czech texts in Perl. I will be glad
+	if anybody suggests to make these methods more general,
+	including more languages and/or charsets.
+
+Readme pro distribuci Cstools:
+
+	V tomto balíku jsou moduly, které mohou být u¾iteèné pøi práci
+	s èeskými (a slovenskými) texty v Perlu.
+
+	Modul Cz::Cstocs:
+
+		Objekt, pomocí nìho¾ je mo¾no konvertovat mezi
+		znakovými sadami bez nutnosti vnìj¹ího programu.
+
+	Program cstocs:
+
+		Tato verze konverzího programu cstocs je zalo¾ena na
+		vý¹e uvedeném modulu. Provádí pøevody kódování nad
+		danými soubory nebo nad standardním vstupem.
+
+	Modul Cz::Sort:
+
+		Implementuje ètyøprùchodové èeské tøídìní, nezávislé
+		na pou¾itých locales, proto¾e kdo má správné locales,
+		¾e? Exportuje funkce czcmp a czsort, které pracují
+		podobnì jako perlovské vestavìné cmp a sort.
+
 Readme file for Cstools distribution:
 
-	This file includes modules that are usefull when dealing with
-	Czech (and Slovak) texts in Perl.
+	This package includes modules that are usefull when dealing
+	with Czech (and Slovak) texts in Perl.
 
 	Module Cz::Cstocs:
 
 		Implements object for various charset encodings, used
-		for the Czech language. Included is also version of
-		popular command line utility cstocs.
+		for the Czech language.
+	
+	Program cstocs:
+
+		This version of popular charset reencoding utility
+		uses the above mentioned module to convert text
+		between various charsets.
 
 	Module Cz::Sort:
 
 		Sorts according to Czech sorting conventions, regardless
 		on (usually broken) locales. Exports functions czcmp
-		and czsort which can be used in the same way as Perl's
+		and czsort which can be used in similar way as as Perl's
 		internals cmp and sort.
 
 Installation:

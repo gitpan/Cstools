@@ -1,13 +1,20 @@
 
 Revision history for Perl extension Cstools.
 
-0.01 Sun Jun 15 13:33:44 MET DST 1997
-	First Perl version.
+0.07 Thu Jul 31 19:23:36 MET DST 1997
+	Error by one in Cz::Cstocs fixed -- spotted by Petr Mach·Ëek.
+	Version of Cz::Cstocs changed to 3.08.
 
-0.02 Wed Jun 18 16:13:20 MET DST 1997
-	First version released. Contains Cstocs and Cssort modules.
+	Czech readme added.
 
-	Cstocs is version 3.03, Cssort version 0.6.
+0.05 Fri Jul 11 13:41:43 MET DST 1997
+	Namespace Cz:: at CPAN officially registered and the modules
+	named Cz::Cstocs and Cz::Sort.
+
+	The functions exported by Cz::Sort are now czsort and czcmp.
+
+	Cz::Cstocs (and cstocs) version is 3.07. Program cstocs now
+	does the #! substitution when installed using make.
 
 0.03 Sun Jul  6 20:41:47 MET DST 1997
 	Cstocs is version 3.06. Fixed the problem with handling long
@@ -16,18 +23,11 @@ Revision history for Perl extension Cstools.
 	Cssort version 0.62. Now implemented through cscmp function
 	that compares two scalars.
 
-0.04 Thu Jul 10 11:47:40 MET DST 1997
-	Modules renamed to Cz::tocz and Cz::Sort. The command line
-	conversion utility is cstocs still though. The functions
-	exported by Cz::Sort are now czsort and czcmp.
+0.02 Wed Jun 18 16:13:20 MET DST 1997
+	First version released. Contains Cstocs and Cssort modules.
 
-0.05 Fri Jul 11 13:41:43 MET DST 1997
-	Namespace Cz:: at CPAN officially registered and the modules
-	named Cz::Cstocs and Cz::Sort.
+	Cstocs is version 3.03, Cssort version 0.6.
 
-	Cz::Cstocs version is 3.07. Program cstocs now does the #!
-	substitution when installed using make.
-
-0.06 Tue Jul 15 10:32:11 MET DST 1997
-	Little changes in the documentation.
+0.01 Sun Jun 15 13:33:44 MET DST 1997
+	First Perl version.
 

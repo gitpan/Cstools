@@ -82,7 +82,7 @@ letter "E").  Or you can replace a "plusminus sign" with a string
 =item --dir directory
 
 Encoding files are taken from F<directory> instead of the default,
-which is F<Cstocs/enc> in the Perl lib tree. The location of encoding
+which is F<Cz/Cstocs/enc> in the Perl lib tree. The location of encoding
 files can also be changed using the I<CSTOCSDIR> environment variable,
 but the --dir option has the highest priority.
 
@@ -113,11 +113,11 @@ Use all rules from accent file.
 
 =head1 VERSION
 
-3.07
+3.08
 
 =head1 SEE ALSO
 
-Cstocs(3).
+Cz::Cstocs(3).
 
 =head1 AUTHOR
 
@@ -127,7 +127,7 @@ Jan Pazdziora, adelton@fi.muni.cz created the Perl module version.
 
 =cut
 
-use Cstocs;
+use Cz::Cstocs;
 use strict;
 
 0 if defined $main::running_under_some_shell;
@@ -150,30 +150,30 @@ if (grep { /--/ } @ARGV)
 		'inputencoding=s' =>	\$inputenc,
 		'outputencoding=s' =>	\$outputenc,
 		'help'	=>	\&usage,
-		'version' =>	sub {print STDERR "This is cstocs version $Cstocs::VERSION.\n"; exit 0; },
+		'version' =>	sub {print STDERR "This is cstocs version $Cz::Cstocs::VERSION.\n"; exit 0; },
 		'debug' =>	\$debug,
 		);
 	if ($debug)
-		{ $Cstocs::DEBUG = 1; }
+		{ $Cz::Cstocs::DEBUG = 1; }
 	if (defined $fillstring)
 		{
-		$Cstocs::fillstring = $fillstring;
-		print STDERR "Setting fillstring to '$Cstocs::fillstring' from command line\n" if Cstocs::DEBUG;
+		$Cz::Cstocs::fillstring = $fillstring;
+		print STDERR "Setting fillstring to '$Cz::Cstocs::fillstring' from command line\n" if Cz::Cstocs::DEBUG;
 		}
 	if (defined $cstocsdir)
 		{
-		$Cstocs::cstocsdir = $cstocsdir;
-		print STDERR "Setting enc-dir $Cstocs::cstocsdir from command line\n" if Cstocs::DEBUG;
+		$Cz::Cstocs::cstocsdir = $cstocsdir;
+		print STDERR "Setting enc-dir $Cz::Cstocs::cstocsdir from command line\n" if Cz::Cstocs::DEBUG;
 		}
 	if ($one_by_more != 1)
 		{
-		$Cstocs::one_by_more = $one_by_more;
-		print STDERR "Setting one_by_more to $Cstocs::one_by_more from command line\n" if Cstocs::DEBUG;
+		$Cz::Cstocs::one_by_more = $one_by_more;
+		print STDERR "Setting one_by_more to $Cz::Cstocs::one_by_more from command line\n" if Cz::Cstocs::DEBUG;
 		}
 	if ($use_accent != 1)
 		{
-		$Cstocs::use_accent = $use_accent;
-		print STDERR "Setting use_accent to $Cstocs::use_accent from command line\n" if Cstocs::DEBUG;
+		$Cz::Cstocs::use_accent = $use_accent;
+		print STDERR "Setting use_accent to $Cz::Cstocs::use_accent from command line\n" if Cz::Cstocs::DEBUG;
 		}
 	}
 elsif (@ARGV < 2)
@@ -182,7 +182,7 @@ elsif (@ARGV < 2)
 $inputenc = shift unless defined $inputenc;
 $outputenc = shift unless defined $outputenc;
 
-my $convert = new Cstocs $inputenc, $outputenc;
+my $convert = new Cz::Cstocs $inputenc, $outputenc;
 while (<>)
 	{ print &$convert($_); }
 
@@ -194,7 +194,7 @@ Usage: cstocs [options] inputencoding outputencoding [ files ... ]
     where [options] is zero or more of:
     --dir=string	Directory where to search for encoding and accent
 	files, can also be changed via the CSTOCSDIR environment variable.
-	Default is $Cstocs::DEFAULTCSTOCSDIR.
+	Default is $Cz::Cstocs::DEFAULTCSTOCSDIR.
     --debug	Print out debugging info while processing.
     --fillstring=string		Characters from the input encoding not
 	defined in the output encoding nor in the accent file will be
