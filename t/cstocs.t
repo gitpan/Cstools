@@ -2,7 +2,7 @@
 ###
 # Cz::Cstocs.pm
 
-BEGIN { $| = 1; print "1..22\n"; }
+BEGIN { $| = 1; print "1..27\n"; }
 END {print "not ok 1\n" unless $loaded_cstocs;}
 
 ###
@@ -46,11 +46,11 @@ print "ok 4\n";
 print "Calling the external cstocs program\n";
 
 use ExtUtils::testlib;
-my $libs = join " -I", '', @INC;
+my @libs = map "-I$_", @INC;
 my $TSTFILE = 'out.tst';
 $TSTFILE = 't/' . $TSTFILE if -d 't';
 
-open PROCESS, "| $^X $libs blib/script/cstocs il2 ascii > $TSTFILE";
+open PROCESS, "| $^X @libs blib/script/cstocs il2 ascii > $TSTFILE";
 print PROCESS "je¾eèek\n";
 close PROCESS;
 
@@ -66,7 +66,7 @@ print "ok 5\n";
 
 print "And once more, for the bug that was fixed in 3.07\n";
 
-open PROCESS, "| $^X $libs blib/script/cstocs pc2 il2 > $TSTFILE";
+open PROCESS, "| $^X @libs blib/script/cstocs pc2 il2 > $TSTFILE";
 print PROCESS "\375\n";
 close PROCESS;
 
@@ -196,7 +196,7 @@ print "Test the aliases\n";
 my $conv = new Cz::Cstocs 'iso-8859-2', 'US-ASCII';
 if (not defined $conv) {
 	print "$Cz::Cstocs::errstr\nnot ";
-	}
+}
 print "ok 21\n";
 
 my $result22 = $conv->conv('malièký je¾eèek');
@@ -205,3 +205,49 @@ printf "Got $result22\n";
 print 'not ' if $result22 ne 'malicky jezecek';
 print "ok 22\n";
 
+###
+
+print "Test il2 to UTF-8 and back\n";
+
+my $il2_to_utf8 = new Cz::Cstocs 'il2', 'utf8';
+if (not defined $il2_to_utf8) {
+	print "$Cz::Cstocs::errstr\nnot ";
+}
+print "ok 23\n";
+
+my $result24 = $il2_to_utf8->conv('malièký je¾eèek');
+printf "Got $result24\n";
+print 'not ' if $result24 ne "maliÄ\x8dkÃ½ jeÅ¾eÄ\x8dek";
+print "ok 24\n";
+
+my $utf8_to_il2 = new Cz::Cstocs 'utf8', 'il2';
+if (not defined $utf8_to_il2) {
+	print "$Cz::Cstocs::errstr\nnot ";
+}
+print "ok 25\n";
+
+my $result26 = $utf8_to_il2->conv($result24);
+printf "Got $result26\n";
+print 'not ' if $result26 ne 'malièký je¾eèek';
+print "ok 26\n";
+
+###
+
+print "And now test the inplace conversion\n";
+
+open OUT, "> $TSTFILE";
+print OUT $il2_to_utf8->conv('malièký je¾eèek'), "\n";
+close OUT;
+
+print "Running: $^X @libs blib/script/cstocs -i.bak utf8 ascii $TSTFILE\n";
+system "$^X @libs blib/script/cstocs -i.bak utf8 ascii $TSTFILE";
+
+open IN, $TSTFILE;
+my $result27 = <IN>;
+close IN;
+
+print 'not ' if $result27 ne "malicky jezecek\n";
+print "ok 27\n";
+
+unlink $TSTFILE;
+unlink "$TSTFILE.bak";

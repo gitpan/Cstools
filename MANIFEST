@@ -17,6 +17,7 @@ Cz/Cstocs/enc/macce.enc
 Cz/Cstocs/enc/pc2.enc
 Cz/Cstocs/enc/pc2a.enc
 Cz/Cstocs/enc/tex.enc
+Cz/Cstocs/enc/utf8.enc
 Cz/Cstocs/enc/vga.enc
 Cz/Cstocs/Getopt.pm
 Cz/Sort.pm
@@ -24,7 +25,6 @@ Cz/Time.pm
 MANIFEST
 Makefile.PL
 README
-ToDo
 bin/cssort.PL
 bin/cstocs.PL
 bin/dbfcstocs.PL

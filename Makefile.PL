@@ -3,18 +3,23 @@ use Config;
 
 use ExtUtils::MakeMaker;
 
-my $VERSION = '0.178';
+my $VERSION = '3.2';
+
+=comment
 
 sub MY::dist {
 	package MY; # so that "SUPER" works right
 	my $inherited = shift->SUPER::dist(@_);
 	$inherited =~ s/old text/new text/;
 	$inherited;
-	}
+}
+
+=cut
 
 sub MY::postamble {
 	"
 specversion: Makefile.PL Cstools.spec.dist
+	echo Updating Cstools.spec
 	\@\$(PERL) -pe 's/__VERSION__/$VERSION/' Cstools.spec.dist > Cstools.spec
 
 rpm: dist
@@ -33,7 +38,8 @@ WriteMakefile(
 					},
 	EXE_FILES	=> [ 'bin/cstocs', 'bin/cssort', 'bin/dbfcstocs'],
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz',
-		POSTOP => 'mv $(DISTNAME)-$(VERSION).tar.gz ../' },
+		POSTOP => 'mv $(DISTNAME)-$(VERSION).tar.gz ../',
+		DIST_DEFAULT => 'specversion tardist' },
 	clean		=> { FILES => 'bin/cstocs bin/cssort bin/dbfcstocs' },
 	macro		=> { DIST_DEFAULT => 'specversion tardist', },
 	);

@@ -96,6 +96,7 @@ cacute		c
 ccaron		c
 ccedilla	c
 cent		c
+ch		c
 copyright	(c)
 dagger		|
 dcaron		d
@@ -195,3 +196,6 @@ yen		y
 zabovedot	z
 zacute		z
 zcaron		z
+apostrophe	'
+tilde		~
+grave		`

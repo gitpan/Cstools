@@ -5,7 +5,7 @@ Release: 1
 Group: Applications/Text
 Source: Cstools-__VERSION__.tar.gz
 URL: http://www.fi.muni.cz/~adelton/perl/
-Copyright: 1997--2000 Jan Pazdziora, adelton@fi.muni.cz.
+Copyright: 1997--2002 Jan Pazdziora, adelton@fi.muni.cz.
 Buildroot: /tmp/cstools-root
 Packager: Milan Kerslager <milan.kerslager@spsselib.hiedu.cz>
 

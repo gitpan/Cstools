@@ -56,3 +56,4 @@ if ("@data" ne "0 1 Malicky Jezecek Pareziste 123 19980416 1700 0.17") {
 	}
 print "ok 4\n";
 
+unlink $OUTDBF;

@@ -30,13 +30,9 @@ cstocs -- charset encoding convertor for the Czech and Slovak languages.
 
 =head1 SYNOPSIS
 
-	cstocs il2 ascii < file | more
-
-Please see the
-
+	cstocs il2 ascii < file | less
+	cstocs -i utf8 il2 file1 file2 file3
 	cstocs --help
-
-for short usage info.
 
 =head1 DESCRIPTION
 
@@ -88,6 +84,12 @@ letter "E").  Or you can replace a "plusminus sign" with a string
 
 =over 4
 
+=item -i, -i.ext, --inplace.ext
+
+Files specified will be converted in-place, using Perl C<-i> facility.
+Optionaly, an extension for backup copies may be specified after dot.
+This parameter B<has> to be the first one, if specified.
+
 =item --dir directory
 
 Encoding files are taken from F<directory> instead of the default,
@@ -127,6 +129,8 @@ rewritten to "AE" string.
 
 Use all rules from accent file. This is the default option.
 
+=back
+
 =head1 SEE ALSO
 
 Cz::Cstocs(3).
@@ -139,7 +143,17 @@ Jan Pazdziora, adelton@fi.muni.cz, created the Perl module version.
 
 =cut
 
-use strict;
+BEGIN {
+	if ($ARGV[0] =~ /^--?i(npl)?.*?(\..+?$)?$/) {
+		my $ext = '';
+		$ext = $2 if defined $2;
+		shift @ARGV;
+		### print STDERR "Running: $^X -i$ext -- $0 @ARGV\n";
+		exec $^X, "-i$ext", '--', $0, @ARGV;
+		die "Exec of perl $^X for inplace substitution failed.\n";
+	}
+}
+
 use Cz::Cstocs;
 use Cz::Cstocs::Getopt;
 
@@ -148,9 +162,10 @@ my $convert = Cz::Cstocs::Getopt::process_argv;
 if (not defined $convert) {
 	print STDERR $@;
 	exit(1);
-	}
+}
 
-while (<>)
-	{ print &$convert($_); }
+while (<>) {
+	print &$convert($_);
+}
 
 EOBODY

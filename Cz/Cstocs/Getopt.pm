@@ -10,6 +10,7 @@ sub usage {
 	print STDERR <<EOF;
 Usage: cstocs [options] inputencoding outputencoding [ files ... ]
   where [options] can be
+    -i[.ext]		In-place substitution; must be the first parameter.
     --dir=string	Alternate directory with encoding and accent files.
     --fillstring=str	String that will replace unconvertable characters.
     --null		Equivalent to --fillstring=""
@@ -27,10 +28,9 @@ EOF
 	exit;
 }
 
-sub print_version
-	{
+sub print_version {
 	print STDERR "This is cstocs version $Cz::Cstocs::VERSION.\n";
-	}
+}
 
 sub process_argv {
 	my $getopt_config_hashref = shift;
@@ -43,7 +43,7 @@ sub process_argv {
 		### print "Key $key -> $value\n";
 		$getopt_config_hashref->{$key} = \$options{$value}
 			unless ref $value;
-		}
+	}
 	my %getopt_config = (
 		'null' =>	sub { $options{'fillstring'} = ''; },
 		'fillstring=s' =>	\$options{'fillstring'},
@@ -69,24 +69,29 @@ sub process_argv {
 
 	if (grep { /--/ } @ARGV) {
 		Getopt::Long::GetOptions(%getopt_config);
-		}
-	elsif (@ARGV < 2)
-		{ usage(); }
+	} elsif (@ARGV < 2) {
+		usage();
+	}
 
 	my ($inputenc, $outputenc);
-	if (defined $options{'inputenc'})
-		{ $inputenc = $options{'inputenc'}; delete $options{'inputenc'}; }
-	else
-		{ $inputenc = shift @ARGV; }
+	if (defined $options{'inputenc'}) {
+		$inputenc = $options{'inputenc'};
+		delete $options{'inputenc'};
+	} else {
+		$inputenc = shift @ARGV;
+	}
 
-	if (defined $options{'outputenc'})
-		{ $outputenc = $options{'outputenc'}; delete $options{'outputenc'}; }
-	else
-		{ $outputenc = shift @ARGV; }
+	if (defined $options{'outputenc'}) {
+		$outputenc = $options{'outputenc'};
+		delete $options{'outputenc'};
+	} else {
+		$outputenc = shift @ARGV;
+	}
 
 	my $tag;
-	for $tag (keys %options)
-		{ delete $options{$tag} unless defined $options{$tag}; }
+	for $tag (keys %options) {
+		delete $options{$tag} unless defined $options{$tag};
+	}
 	print STDERR "Calling new Cz::Cstocs $inputenc, $outputenc\n" if Cz::Cstocs::DEBUG;
 	my $convert = new Cz::Cstocs $inputenc, $outputenc, %options;
 
@@ -94,9 +99,9 @@ sub process_argv {
 	$options{'outputenc'} = $outputenc;
 	if (wantarray) {
 		return ($convert, $options);
-		}
-	return $convert;
 	}
+	return $convert;
+}
 
 1;
 

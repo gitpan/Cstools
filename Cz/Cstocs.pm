@@ -17,18 +17,15 @@ use vars qw( $VERSION $DEBUG $cstocsdir @ISA @EXPORT_OK %EXPORT $errstr);
 %EXPORT = ( '_stupidity_workaround' => 1 );
 
 sub _stupidity_workaround {
-	}
+}
 
-sub import
-	{
+sub import {
 	my $class = shift;
 	my @data = @_;
-	if (@data)
-		{
+	if (@data) {
 		my @avail = Cz::Cstocs->available_enc();
 		my $fn;
-		for $fn (@data)
-			{
+		for $fn (@data) {
 			local $^W = 0;
 			next if grep { $_ eq $fn } @EXPORT_OK;
 			my ($in, $out) = $fn =~ /^_?(.*?)_(?:to_)?(.*)$/;
@@ -37,15 +34,17 @@ sub import
 			die "Definition of $fn failed: $errstr"
 						unless defined $fnref;;
 			eval "sub $fn { \$fnref->conv(\@_); }; ";
-			if ($@) { die "Creating conversion function $fn failed: $@"; }
+			if ($@) {
+				die "Creating conversion function $fn failed: $@";
+			}
 			push @EXPORT_OK, $fn;
 			$EXPORT{$fn} = 1;
-			}
 		}
+	}
 	Cz::Cstocs->export_to_level(1, '_stupidity_workaround', @data);
-	} 
+} 
 
-$VERSION = '3.191';
+$VERSION = '3.2';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -57,20 +56,18 @@ sub DEBUG ()	{ $DEBUG; }
 my $defaultcstocsdir = '/packages/share/cstocs/lib';
 
 # Look at the environment variable
-if (defined $ENV{'CSTOCSDIR'})
-	{
+if (defined $ENV{'CSTOCSDIR'}) {
 	$defaultcstocsdir = $ENV{'CSTOCSDIR'};
 	print STDERR "Using enc-dir $defaultcstocsdir from the CSTOCSDIR env-var\n"
 		if DEBUG;
-	}
+}
 # Or take the encoding files from the Perl tree
-elsif (defined $INC{'Cz/Cstocs.pm'})
-	{
+elsif (defined $INC{'Cz/Cstocs.pm'}) {
 	$defaultcstocsdir = $INC{'Cz/Cstocs.pm'};
 	$defaultcstocsdir =~ s!\.pm$!/enc!;
 	print STDERR "Using enc-dir $defaultcstocsdir from \@INC\n"
 		if DEBUG;
-	}
+}
 
 # We have unless hare because you could have overriden $cstocsdir
 $cstocsdir = $defaultcstocsdir unless defined $cstocsdir;
@@ -105,8 +102,7 @@ my @diacritics = qw( abovedot acute breve caron cedilla circumflex
 # Now, the function -- loading encoding and accent files
 
 # Filling input and output_hashes tables for given encoding
-sub load_encoding
-	{
+sub load_encoding {
 	my $enc = lc shift;
 
 	return if defined $input_hashes{$enc};	# has already been loaded
@@ -117,35 +113,33 @@ sub load_encoding
 
 	my ($input, $output) = ({}, {});	# just speedup thing
 	local $_;
-	while (<FILE>)
-		{
+	while (<FILE>) {
 		next if /^(#|\s*$)/;
 		my ($tag, $desc) = /^\s*(\S+)\s+(\S+)\s*$/;
-		unless (defined $tag and defined $desc)
-			{
+		unless (defined $tag and defined $desc) {
 			chomp;
 			warn "Syntax error in $file at line $: `$_'.\n";
 			next;
-			}
-		if ($tag =~ /^\d+|0x\d+$/)
-			{
-			$tag = oct $tag if $tag =~ /^0/;
-			$tag = pack "C", $tag;
-			}
+		}
+		if ($tag =~ /^\d+|0x\d+$/) {
+			$tag = pack 'C*', map {
+				/^0/ ? oct($_) : $_
+				} split /,/, $tag;
+		}
 		$input->{$tag} = $desc;
 		$output->{$desc} = $tag unless defined $output->{$desc};
-		}
+	}
 	close FILE;
 
 	$input_hashes{$enc} = $input;
 	$output_hashes{$enc} = $output;
 
-	if ($enc eq "tex")
-		{ fixup_tex_encoding(); }
+	if ($enc eq "tex") {
+		fixup_tex_encoding();
 	}
+}
 
-sub fixup_tex_encoding
-	{
+sub fixup_tex_encoding {
 	my $tag;
 	
 	print STDERR "Doing tex fixup\n" if DEBUG;
@@ -156,93 +150,91 @@ sub fixup_tex_encoding
 	# we need this to fill the defaults
 	load_encoding('ascii');
 	my $asciiref = $output_hashes{'ascii'};
-	for $tag (keys %$asciiref)
-		{ $output->{$tag} = $asciiref->{$tag}
-			unless defined $output->{$tag}; }
+	for $tag (keys %$asciiref) {
+		$output->{$tag} = $asciiref->{$tag}
+			unless defined $output->{$tag};
+	}
 
 	my %processed = ();
 
 	my (@dialetters, @dianonletters, @nondialetters, @nondianonletters);
 	my (@inputs) = keys %$input;
-	for $tag (@inputs)
-		{
+	for $tag (@inputs) {
 		my $value = $input->{$tag};
 
 		my $az = 0;
 		$az = 1 if $tag =~ /[a-zA-Z]$/;
 
-		if ($az and $output->{$value} eq $tag)
-			{ $output->{$value} = $tag . '{}'; }
+		if ($az and $output->{$value} eq $tag) {
+			$output->{$value} = $tag . '{}';
+		}
 		$input->{$tag . ' '} = $value;
 
-		if (grep { $_ eq $value } @diacritics)
-			{
+		if (grep { $_ eq $value } @diacritics) {
 			my $e;
-			if ($az)
-				{
+			if ($az) {
 				push @dialetters, $tag;
-				for $e ('a'..'h', 'k'..'z', 'A'..'Z')
-					{ $output->{$e.$value} = $tag.' '.$e }
+				for $e ('a'..'h', 'k'..'z', 'A'..'Z') {
+					$output->{$e.$value} = $tag.' '.$e
 				}
-			else
-				{
+			} else {
 				push @dianonletters, $tag;
-				for $e ('a'..'h', 'k'..'z', 'A'..'Z')
-					{ $output->{$e.$value} = $tag.$e }
-				for $e ('a'..'z', 'A'..'Z')
-					{ $input->{$tag.$e} = $e.$value; }
+				for $e ('a'..'h', 'k'..'z', 'A'..'Z') {
+					$output->{$e.$value} = $tag.$e
 				}
-			for $e ('i', 'j')
-				{ $output->{$e.$value} = $tag.'\\'.$e.'{}' }
-			for $e ('a'..'z', 'A'..'Z')
-				{ $input->{$tag.' '.$e} = $e.$value; }
-			for $e ('i', 'j')
-				{
-				$input->{$tag.'\\'.$e} = $e.$value;
-				$input->{$tag.' \\'.$e} = $e.$value;
+				for $e ('a'..'z', 'A'..'Z') {
+					$input->{$tag.$e} = $e.$value;
 				}
 			}
-		elsif ($az)		{ push @nondialetters, $tag; }
-		else			{ push @nondianonletters, $tag; }
+			for $e ('i', 'j') {
+				$output->{$e.$value} = $tag.'\\'.$e.'{}'
+			}
+			for $e ('a'..'z', 'A'..'Z') {
+				$input->{$tag.' '.$e} = $e.$value;
+			}
+			for $e ('i', 'j') {
+				$input->{$tag.'\\'.$e} = $e.$value;
+				$input->{$tag.' \\'.$e} = $e.$value;
+			}
+		} elsif ($az) {
+			push @nondialetters, $tag;
+		} else {
+			push @nondianonletters, $tag;
 		}
+	}
 
 	my $regexp = '';
 
-	if (@dialetters)
-		{
+	if (@dialetters) {
 		$regexp .= join '', '(',
 			join('|', map { "\Q$_"; } @dialetters),
 				")([ \\t]+[a-zA-Z]|[ \\t]*(\\\\[ij]([ \\t]+(\{\})?|[ \\t]*(\$|\{\}))|{([a-zA-Z]|\\\\[ij][ \\t]*(\{\})?)}))";
-		}
-	if (@dianonletters)
-		{
+	}
+	if (@dianonletters) {
 		$regexp .= '|' if $regexp ne '';
 		$regexp .= '(' . join '',
 			join('|', map { "\Q$_"; } @dianonletters),
 				")[ \\t]*([a-zA-Z]|\\\\[ij]([ \\t]+(\{\})?|[ \\t]*(\$|\{\}))|{([a-zA-Z]|\\\\[ij][ \\t]*(\{\})?)})";
-		}
-	if (@nondialetters)
-		{
+	}
+	if (@nondialetters) {
 		$regexp .= '|' if $regexp ne '';
 		$regexp .= '(' . join '',
 			join('|', map { "\Q$_"; } @nondialetters),
 				")([ \\t]+(\{\})?|[ \\t]*\$)"
-		}
-	if (@nondianonletters)
-		{
+	}
+	if (@nondianonletters) {
 		$regexp .= '|' if $regexp ne '';
 		$regexp .= '(' . join '',
 			join('|', map { "\Q$_"; } @nondianonletters),
 				")[ \\t]*(\{\})?"
-		}
+	}
 
 	$regexp_matches{'tex'} = $regexp;
 	1;
-	}
+}
 
 # Loading accent file
-sub load_accent
-	{
+sub load_accent {
 	return if $accent_read;
 	$accent_read = 1;
 	
@@ -251,20 +243,18 @@ sub load_accent
 	print STDERR "Parsing accent file $file\n" if DEBUG;
 
 	local $_;
-	while (<FILE>)
-		{
+	while (<FILE>) {
 		next if /^(#|\s*$)/;
 		my ($key, $val) = /^\s*(\S+)\s+(\S+)\s*$/;
-		unless (defined $key and defined $val)
-			{
+		unless (defined $key and defined $val) {
 			chomp;
 			warn "Syntax error in $file at line $: `$_'.\n";
 			next;
-			}
-		$accent{$key} = $val;
 		}
-	close FILE;
+		$accent{$key} = $val;
 	}
+	close FILE;
+}
 
 # Load the alias file, fill the global %alias hash;
 sub load_alias {
@@ -278,9 +268,9 @@ sub load_alias {
 		chomp;
 		my ($alias, $enc) = split;
 		$alias{$alias} = $enc;
-		}
-	close FILE;
 	}
+	close FILE;
+}
 
 # Normalizes the encoding name -- expands aliases
 sub normalize_enc_name {
@@ -288,24 +278,22 @@ sub normalize_enc_name {
 	my $enc = lc shift;
 	$enc =~ s/[^a-z0-9]//g;
 	( defined $alias{$enc} ? $alias{$enc} : $enc );	
-	}
+}
 
 # Constructor -- takes two arguments, input and output encodings,
 # a optionally hash of options. Returns reference to code that will
 # do the conversion, or undef
-sub new
-	{
+sub new {
 	my $class = shift;
 	my ($inputenc, $outputenc) = (shift, shift);
 
 	local $/ = "\n";
 
 	# check input values
-	unless (defined $inputenc and defined $outputenc)
-		{
+	unless (defined $inputenc and defined $outputenc) {
 		print STDERR "Both input and output encodings must be specified in call to ", __PACKAGE__, "::new\n";
 		return;
-		}
+	}
 
 	# Default options
 	my $fillstring = ' ';
@@ -318,8 +306,7 @@ sub new
 
 	my %opts = @_;
 	my ($tag, $value);
-	while (($tag, $value) = each %opts)
-		{
+	while (($tag, $value) = each %opts) {
 		print STDERR "Option: $tag = '$value'\n" if DEBUG;
 		$tag eq 'fillstring' and $fillstring = $value;
 		$tag eq 'use_accent' and
@@ -329,70 +316,69 @@ sub new
 				( $value ? 0 : 1) : 0);
 		$tag eq 'cstocsdir' and $cstocsdir = $value;	
 		$tag eq 'one_by_one' and $one_by_one = $value;	
-		}
+	}
 
 	$inputenc = normalize_enc_name($inputenc);
 	$outputenc = normalize_enc_name($outputenc);
 
 	# encode settings into the function name
-	if (defined $functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"})
-		{ return $functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"}; }
+	if (defined $functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"}) {
+		return $functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"};
+	}
 
 	eval {
 		load_encoding($inputenc);
 		load_encoding($outputenc);
 		load_accent() if $use_accent;
-		};
-	if ($@) { $errstr = $@; return; }
+	};
+	if ($@) {
+		$errstr = $@;
+		return;
+	}
 
 	my $conv = {};
 
 	my ($is_one_by_one, $has_space) = (1, 0);
 	my $key;
-	for $key (keys %{$input_hashes{$inputenc}})
-		{
+	for $key (keys %{$input_hashes{$inputenc}}) {
 		my $desc = $input_hashes{$inputenc}{$key};
 		my $output = $output_hashes{$outputenc}{$desc};
 		
-		if (not defined $output and $use_accent)
-			{	# Doesn't have friend in output encoding
+		if (not defined $output and $use_accent) {
+			# Doesn't have friend in output encoding
 			$output = $accent{$desc};
 			$output = undef if $one_by_one and
 				(length $key == 1 and defined $output
 					and length $output != 1);
-			}
-		if (not defined $output and $use_fillstring)
-			{
+		}
+		if (not defined $output and $use_fillstring) {
 			$output = $fillstring;
-			}
+		}
 		
-		next if (not defined $output or $key eq $output);
+		next if (not defined $output
+			or ($inputenc ne 'utf8' and $key eq $output));
 		if (length $key != 1 or length $output != 1)
 			{ $is_one_by_one = 0; }
 		$conv->{$key} = $output;
-		}
+	}
 
 	my $fntext = ' sub { my @converted = map { my $e = $_; if (defined $e) {';
 
-	if (not keys %$conv)
-		{
+	if (not keys %$conv) {
 		# do nothing;
-		}
-	elsif ($is_one_by_one)
-		{
+	} elsif ($is_one_by_one) {
 		my $src = join "", keys %$conv;
 		$src = "\Q$src";
 		my $dst = join "", values %$conv;
 		$dst = "\Q$dst";
 		$fntext .= qq! \$e =~ tr/$src/$dst/; !;
-		}
-	elsif ($inputenc eq 'tex')
-		{
+	} elsif ($inputenc eq 'tex') {
 		my $src = $regexp_matches{'tex'};
 		$fntext .= qq! \$e =~ s/$src/ my \$e = \$&; my \$orig = \$e; \$e =~ s#[{}]# #sog; \$e =~ s#[ \\t]+# #sog; \$e =~ s# \$##o; (defined \$conv->{\$e} ? \$conv->{\$e} : \$orig); /esog; !;
-		}
-	else
-		{
+	} elsif ($inputenc eq 'utf8') {
+		$fntext .= qq! \$e =~ s/[\\x21-\\x7f]|[\\xc0-\\xdf].|[\\xe0-\\xef]..|[\\xf0-\\xf7]...|[\\xf8-\\xfb]....|[\\xfc\\xfd]...../defined \$conv->{\$&} ? \$conv->{\$&} : (
+		$use_fillstring ? \$fillstring : '') /esog; !;
+	} else {
 		my $singles = join "", grep { length $_ == 1 } keys %$conv;
 		$singles = "[". "\Q$singles" . "]";
 		
@@ -400,12 +386,14 @@ sub new
 			( map { my $e = "\Q$_"; $e; }
 				sort { length $b <=> length $a }
 					grep { length $_ != 1 } keys %$conv);
-		if ($singles ne "[]")
-			{ $src .= "|" unless $src eq ''; $src .= $singles; }
+		if ($singles ne "[]") {
+			$src .= "|" unless $src eq '';
+			$src .= $singles;
+		}
 			
 		$fntext .= qq! \$e =~ s/$src/\$conv->{\$&}/sog; !;
-		}
-	
+	}
+
 	$fntext .= ' $e; } else { undef; }} @_; if (wantarray) { return @converted; } else { return join "", map { defined $_ ? $_ : "" } @converted; } }';
 
 	print STDERR "Conversion function for $inputenc to $outputenc:\n$fntext\n" if DEBUG;
@@ -413,40 +401,38 @@ sub new
 	my $fn = eval $fntext;
 	do {	chomp $@;
 		die "Fatal error in Cz::Cstocs: please report this to adelton\@fi.muni.cz so\n that we could find out what happened. Thanks.\n$@, line ", __LINE__, "\n";
-		} if $@;
+	} if $@;
 	bless $fn, $class;
 	
 	$functions{"${inputenc}_${outputenc}_${fillstring}_${use_fillstring}_${use_accent}_${one_by_one}"} = $fn;
 	$fn;
-	}
-sub conv
-	{
+}
+
+sub conv {
 	my $self = shift;
 	return &$self($_[0]);
-	}
-sub available_enc
-	{
+}
+
+sub available_enc {
 	opendir DIR, $cstocsdir or warn "Error reading $cstocsdir\n";
 	my @list = sort map { s/\.enc$//; $_ } grep { /\.enc$/ } readdir DIR;
 	closedir DIR;
 	return @list;
-	}
+}
 
-sub diacritic_char
-	{
+sub diacritic_char {
 	my ($encoding, $char) = @_;
 	load_encoding($encoding);
 
 	my @result = ();
 	my $dia;
-	for $dia (@diacritics)
-		{
+	for $dia (@diacritics) {
 		my $name = $char . $dia;
 		push @result, $output_hashes{$encoding}{$name}
 			if defined $output_hashes{$encoding}{$name};
-		}
-	@result;
 	}
+	@result;
+}
 
 1;
 
@@ -454,13 +440,14 @@ sub diacritic_char
 
 	use Cz::Cstocs;
 	my $il2_to_ascii = new Cz::Cstocs 'il2', 'ascii';
-	while (<>)
-		{ print &$il2_to_ascii($_); }
-
+	while (<>) {
+		print &$il2_to_ascii($_);
+	}
 
 	use Cz::Cstocs 'il2_ascii';
-	while (<>)
-		{ print il2_ascii($_); }
+	while (<>) {
+		print il2_ascii($_);
+	}
 
 	use Cz::Cstocs;
 	sub il2toascii;
@@ -482,8 +469,9 @@ ISO-8859-2, iso88592 and il2 are all aliases of the same encoding.
 For backward compatibility, method I<conv> is supported as well,
 so the example above could also read
 
-	while (<>)
-		{ print $il2_to_ascii->conv($_); }
+	while (<>) {
+		print $il2_to_ascii->conv($_);
+	}
 
 You can also use typeglob syntax.
 
@@ -548,7 +536,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.182
+3.2
 
 =head1 SEE ALSO
 
