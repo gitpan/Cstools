@@ -1,6 +1,10 @@
 
 Revision history for Perl extension Cstools.
 
+0.175 Tue May  9 15:10:35 MET DST 2000
+	Use of uninitialized value in Cstocs fixed, reported by Jan
+	Yenya Kasprzak.
+
 0.174 Mon Apr  3 17:58:47 MET DST 2000
 	Workaround for 5.6.0 bug with sort, pointed by Pavel Rychetsky,
 	and workaround (in tests) for systems that do not understand

@@ -45,7 +45,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, '_stupidity_workaround', @data);
 	} 
 
-$VERSION = '3.181';
+$VERSION = '3.182';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -358,7 +358,8 @@ sub new
 			{	# Doesn't have friend in output encoding
 			$output = $accent{$desc};
 			$output = undef if $one_by_one and
-				(length $key == 1 and length $output != 1);
+				(length $key == 1 and defined $output
+					and length $output != 1);
 			}
 		if (not defined $output and $use_fillstring)
 			{
@@ -547,7 +548,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.181
+3.182
 
 =head1 SEE ALSO
 
