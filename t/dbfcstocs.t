@@ -3,7 +3,7 @@
 # Cz::Cstocs.pm
 
 BEGIN { $^W = 0; $| = 1;
-	eval { use XBase; };
+	eval 'use XBase;';
 	if ($@) {
 		print "1..0\n";
 		exit;

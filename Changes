@@ -1,6 +1,10 @@
 
 Revision history for Perl extension Cstools.
 
+0.1772 Thu Aug  3 17:28:38 MET DST 2000
+	The dbfcstocs.t test fails if XBase module is not installed,
+	found out by Mr. Schinder.
+
 0.1771 Fri Jul 28 17:05:10 MET DST 2000
 	Added the nomemo option to dbfcstocs.
 
