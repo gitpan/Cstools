@@ -38,7 +38,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.09
+3.10
 
 =head1 SEE ALSO
 
@@ -52,7 +52,7 @@ package Cz::Cstocs;
 no strict;
 use vars qw($VERSION $DEBUG $DEFAULTCSTOCSDIR);
 
-$VERSION = '3.09';
+$VERSION = '3.10';
 
 $DEBUG = 0 unless defined $DEBUG;
 sub DEBUG ()	{ $DEBUG; }

@@ -12,9 +12,10 @@ EOF
 use ExtUtils::MakeMaker;
 WriteMakefile(
 	NAME		=> 'Cz',
-	VERSION		=> '0.08',
+	DISTNAME	=> 'Cstools',
+	VERSION		=> '0.09',
 	PL_FILES	=> { 'bin/cstocs.PL' => 'bin/cstocs' },
 	EXE_FILES	=> [ 'bin/cstocs' ],
-	DISTNAME	=> 'Cstools',
-	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz',
+		POSTOP => 'mv $(DISTNAME)-$(VERSION).tar.gz ../' },
 );

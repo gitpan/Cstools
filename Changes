@@ -1,6 +1,10 @@
 
 Revision history for Perl extension Cstools.
 
+0.09 Fri Sep 26 17:58:34 MET DST 1997
+	Kam encoding file fixed -- Uacute to Uring at 166, spotted by
+	Petr Mach·Ëek. Version of Cz::Cstocs changed to 3.10.
+	
 0.08 Thu Jul 31 20:10:31 MET DST 1997
 	'Error by one' in Cz::Cstocs fixed -- spotted by Petr Mach·Ëek.
 	The iso-latin-2 encoding file fixed (rcaron changed to racute).
