@@ -3,96 +3,7 @@
 
 Cz::Cstocs - conversions of charset encodings for the Czech language
 
-=head1 SYNOPSIS
-
-	use Cz::Cstocs;
-	my $il2_to_ascii = new Cz::Cstocs 'il2', 'ascii';
-	while (<>)
-		{ print &$il2_to_ascii($_); }
-
-
-	use Cz::Cstocs 'il2_ascii';
-	while (<>)
-		{ print il2_ascii($_); }
-
-=head1 DESCRIPTION
-
-This module helps in converting texts between various charset
-encodings, used for Czech and Slovak languages. The instance of the
-object B<Cz::Cstocs> is created using method B<new>. It takes at
-least two parameters for input and output encoding and can be
-afterwards used as a function reference to convert strings/lists.
-For backward compatibility, method I<conv> is supported as well,
-so the example above could also read
-
-	while (<>)
-		{ print $il2_to_ascii->conv($_); }
-
-The conversion function takes a list and returns list of converted
-strings (in the list context) or one string consisting of concatenated
-results (in the scalar context).
-
-You can modify the behaviour of the conversion function by specifying
-hash of other options after the encoding names in call to B<new>.
-
-=over 4
-
-=item fillstring
-
-Gives alternate string that will replace characters from input
-encoding that are not present in the output encoding. Default is
-space.
-
-=item use_accent
-
-Defines whether the accent file should be used. Default is 1 (true).
-
-=item nofillstring
-
-When 1 (true), will keep characters that do not have friends in
-accent nor output encoding, will no replace them with fillstring.
-Default is 0 except for tex, because you probably rather want to keep
-backslashed symbols than loose them.
-
-=item cstocsdir
-
-Alternate location for encoding and accent files. The default is the
-F<Cz/Cstocs/enc> directory in Perl library tree. This location can
-also be changed with the I<CSTOCSDIR> environment variable.
-
-=back
-
-There is an alternate way to define the conversion function: any
-arguments after use Cz::Cstocs that have form encoding_encoding or
-encoding_to_encoding are processed and the appropriate functions are
-imported. So,
-
-	use Cz::Cstocs qw(pc2_to_il2 il2_ascii);
-
-define two functions, that are loaded into caller's namespace and
-can be used directly. In this case, you cannot specify additional
-options, you only have default behaviour.
-
-=head1 AUTHOR
-
-Jan Pazdziora, adelton@fi.muni.cz, created the module version.
-
-Jan "Yenya" Kasprzak has done the original Un*x implementation.
-
-=head1 VERSION
-
-3.166
-
-=head1 SEE ALSO
-
-cstocs(1), perl(1).
-
 =cut
-
-
-
-# ##################################
-# Here begins the Cz::Cstocs package
 
 package Cz::Cstocs;
 
@@ -131,7 +42,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, $class, @data);
 	} 
 
-$VERSION = '3.166';
+$VERSION = '3.167';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -423,7 +334,7 @@ sub new
 		$conv->{$key} = $output;
 		}
 
-	my $fntext = ' sub { my @converted = map { my $e = $_; ';
+	my $fntext = ' sub { my @converted = map { my $e = $_; if (defined $e) {';
 
 	if (not keys %$conv)
 		{
@@ -457,7 +368,7 @@ sub new
 		$fntext .= qq! \$e =~ s/$src/\$conv->{\$&}/sog; !;
 		}
 	
-	$fntext .= ' $e; } @_; if (wantarray) { return @converted; } else { return  join "", @converted; } }';
+	$fntext .= ' $e; } else { undef; }} @_; if (wantarray) { return @converted; } else { return join "", map { defined $_ ? $_ : "" } @converted; } }';
 
 	print STDERR "Conversion function for $inputenc to $outputenc:\n$fntext\n" if DEBUG;
 
@@ -500,5 +411,91 @@ sub diacritic_char
 	}
 
 1;
+
+=head1 SYNOPSIS
+
+	use Cz::Cstocs;
+	my $il2_to_ascii = new Cz::Cstocs 'il2', 'ascii';
+	while (<>)
+		{ print &$il2_to_ascii($_); }
+
+
+	use Cz::Cstocs 'il2_ascii';
+	while (<>)
+		{ print il2_ascii($_); }
+
+=head1 DESCRIPTION
+
+This module helps in converting texts between various charset
+encodings, used for Czech and Slovak languages. The instance of the
+object B<Cz::Cstocs> is created using method B<new>. It takes at
+least two parameters for input and output encoding and can be
+afterwards used as a function reference to convert strings/lists.
+For backward compatibility, method I<conv> is supported as well,
+so the example above could also read
+
+	while (<>)
+		{ print $il2_to_ascii->conv($_); }
+
+The conversion function takes a list and returns list of converted
+strings (in the list context) or one string consisting of concatenated
+results (in the scalar context).
+
+You can modify the behaviour of the conversion function by specifying
+hash of other options after the encoding names in call to B<new>.
+
+=over 4
+
+=item fillstring
+
+Gives alternate string that will replace characters from input
+encoding that are not present in the output encoding. Default is
+space.
+
+=item use_accent
+
+Defines whether the accent file should be used. Default is 1 (true).
+
+=item nofillstring
+
+When 1 (true), will keep characters that do not have friends in
+accent nor output encoding, will no replace them with fillstring.
+Default is 0 except for tex, because you probably rather want to keep
+backslashed symbols than loose them.
+
+=item cstocsdir
+
+Alternate location for encoding and accent files. The default is the
+F<Cz/Cstocs/enc> directory in Perl library tree. This location can
+also be changed with the I<CSTOCSDIR> environment variable.
+
+=back
+
+There is an alternate way to define the conversion function: any
+arguments after use Cz::Cstocs that have form encoding_encoding or
+encoding_to_encoding are processed and the appropriate functions are
+imported. So,
+
+	use Cz::Cstocs qw(pc2_to_il2 il2_ascii);
+
+define two functions, that are loaded into caller's namespace and
+can be used directly. In this case, you cannot specify additional
+options, you only have default behaviour.
+
+=head1 AUTHOR
+
+Jan Pazdziora, adelton@fi.muni.cz, created the module version.
+
+Jan "Yenya" Kasprzak has done the original Un*x implementation.
+
+=head1 VERSION
+
+3.167
+
+=head1 SEE ALSO
+
+cstocs(1), perl(1).
+
+=cut
 
 

@@ -1,6 +1,10 @@
 
 Revision history for Perl extension Cstools.
 
+0.156 Wed Oct  7 15:01:43 MET DST 1998
+	Cstocs (3.167): Added Chroatian \dj for eth, suggested by
+	Dobrica Pavlinusic. Conversion function is now undef clean.
+
 0.155 Mon Aug 17 17:23:03 MET DST 1998
 	Cstocs (3.166): Added mu to accent file. Added possibility
 	use Cz::Cstocs '_1250_il2';

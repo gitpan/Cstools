@@ -18,11 +18,14 @@
 \r	degree 
 \l	lstroke 
 
+
 \eth	eth 
 \ss	ssharp 
 \Eth	Eth 
 \ae	ae
 \AE	AE
+\dj	eth
+\Dj	Eth
 
 \div	division
 \times	multiply
