@@ -1,6 +1,13 @@
 
 Revision history for Perl extension Cstools.
 
+0.1771 Fri Jul 28 17:05:10 MET DST 2000
+	Added the nomemo option to dbfcstocs.
+
+0.177 Fri Jul 28 16:20:40 MET DST 2000
+	The dbfcstocs utility for charset conversion of dbf files
+	added, suggested by Radim Gelner.
+
 0.176 Tue May 16 13:12:38 MET DST 2000
 	Petr Debef brought the text of CSN 97 6030 and Cz::Sort (0.68)
 	has been changed to be as compliant as possible to it. The

@@ -3,7 +3,7 @@ use Config;
 
 use ExtUtils::MakeMaker;
 
-my $VERSION = '0.176';
+my $VERSION = '0.1771';
 
 sub MY::dist {
 	package MY; # so that "SUPER" works right
@@ -28,11 +28,13 @@ WriteMakefile(
 	DISTNAME	=> 'Cstools',
 	VERSION		=> $VERSION,
 	PL_FILES	=> { 'bin/cstocs.PL' => 'bin/cstocs',
-					'bin/cssort.PL' => 'bin/cssort' },
-	EXE_FILES	=> [ 'bin/cstocs', 'bin/cssort' ],
+					'bin/cssort.PL' => 'bin/cssort',
+					'bin/dbfcstocs.PL' => 'bin/dbfcstocs',
+					},
+	EXE_FILES	=> [ 'bin/cstocs', 'bin/cssort', 'bin/dbfcstocs'],
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz',
 		POSTOP => 'mv $(DISTNAME)-$(VERSION).tar.gz ../' },
-	clean		=> { FILES => 'bin/cstocs bin/cssort' },
+	clean		=> { FILES => 'bin/cstocs bin/cssort bin/dbfcstocs' },
 	macro		=> { DIST_DEFAULT => 'specversion tardist', },
 	);
 

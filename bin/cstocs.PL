@@ -141,85 +141,10 @@ Jan Pazdziora, adelton@fi.muni.cz, created the Perl module version.
 
 use strict;
 use Cz::Cstocs;
+use Cz::Cstocs::Getopt;
 
-sub usage {
-	print_version();
-	print STDERR <<EOF;
-Usage: cstocs [options] inputencoding outputencoding [ files ... ]
-  where [options] can be
-    --dir=string	Alternate directory with encoding and accent files.
-    --fillstring=str	String that will replace unconvertable characters.
-    --null		Equivalent to --fillstring=""
-    --nofillstring	Keep unconvertable unconverted.
-    --nochange, --noaccent	Do not use accent file at all.
-    --onebyone		Use only one-by-one character rules from accent file.
-    --onebymore		Use all entries from the accent file.
-    --version		Print out the version information.
-    --debug		Print out debugging info while processing.
-Input and output encodings can also be specified using --inputencoding
-and --outputencoding options. See man page for detailed description.
-Encodings available are:
-EOF
-	print STDERR "\t@{[ &Cz::Cstocs::available_enc() ]}\n";
-	exit;
-}
+my $convert = Cz::Cstocs::Getopt::process_argv;
 
-sub print_version
-	{
-	print STDERR "This is cstocs version $Cz::Cstocs::VERSION.\n";
-	}
-
-# Out defaults are
-my %options = ();
-
-if (grep { /--/ } @ARGV)
-	{
-	require Getopt::Long;
-	Getopt::Long::GetOptions(
-
-		'null' =>	sub { $options{'fillstring'} = ''; },
-		'fillstring=s' =>	\$options{'fillstring'},
-		'nofillstring' =>	sub { $options{'nofillstring'} = 1 },
-		'usefillstring' =>	sub { $options{'nofillstring'} = 0 },
-
-		'onebyone' =>	sub { $options{'one_by_one'} = 1; },
-		'onebymore' =>	sub { $options{'one_by_one'} = 0; },
-
-		'noaccent',	sub { $options{'use_accent'} = 0; },
-		'nochange',	sub { $options{'use_accent'} = 0; },
-
-		'dir=s' =>	\$options{'cstocsdir'},
-
-		'inputencoding=s' =>	\$options{'inputenc'},
-		'outputencoding=s' =>	\$options{'outputenc'},
-
-		'help'	=>	\&usage,
-		'version' =>	sub { print_version(); exit 0; },
-		'debug' =>	sub { $Cz::Cstocs::DEBUG = 1; },
-
-		);
-	}
-
-elsif (@ARGV < 2)
-	{ usage(); }
-
-my ($inputenc, $outputenc);
-if (defined $options{'inputenc'})
-	{ $inputenc = $options{'inputenc'}; delete $options{'inputenc'}; }
-else
-	{ $inputenc = shift; }
-
-if (defined $options{'outputenc'})
-	{ $outputenc = $options{'outputenc'}; delete $options{'outputenc'}; }
-else
-	{ $outputenc = shift; }
-
-my $tag;
-for $tag (keys %options)
-	{ delete $options{$tag} unless defined $options{$tag}; }
-
-print STDERR "Calling Cz::Cstocs $inputenc, $outputenc\n" if Cz::Cstocs::DEBUG;
-my $convert = new Cz::Cstocs $inputenc, $outputenc, %options;
 if (not defined $convert) {
 	print STDERR $@;
 	exit(1);

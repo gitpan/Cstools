@@ -1,9 +1,9 @@
 Summary: Czech laguage tools
 Name: cstools
-Version: 0.176
+Version: 0.1771
 Release: 1
 Group: Applications/Text
-Source: Cstools-0.176.tar.gz
+Source: Cstools-0.1771.tar.gz
 URL: http://www.fi.muni.cz/~adelton/perl/
 Copyright: 1997--2000 Jan Pazdziora, adelton@fi.muni.cz.
 Buildroot: /tmp/cstools-root
@@ -49,7 +49,7 @@ Modul Cz::Sort:
 
 %prep
 
-%setup -n Cstools-0.176
+%setup -n Cstools-0.1771
 
 %build
 
