@@ -42,7 +42,7 @@ sub import
 	Cz::Cstocs->export_to_level(1, $class, @data);
 	} 
 
-$VERSION = '3.17';
+$VERSION = '3.171';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -452,10 +452,12 @@ sub diacritic_char
 		{ print il2_ascii($_); }
 
 	use Cz::Cstocs;
-	sub dos2win;
+	sub il2toascii;
+		# inform the parser that there is a function il2toascii
 	*il2toascii = new Cz::Cstocs 'il2', 'ascii';
+		# now define the function
 	print il2toascii $data;
-	# Thanks to Jan Krynicky for poining this out
+		# thanks to Jan Krynicky for poining this out
 
 =head1 DESCRIPTION
 
@@ -535,7 +537,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.17
+3.171
 
 =head1 SEE ALSO
 

@@ -41,7 +41,7 @@ at Faculty of Informatics, Masaryk University, Brno
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 SEE ALSO
 
@@ -60,7 +60,7 @@ use Exporter;
 @EXPORT = qw( cz_date cz_month cz_wday cz_month_base cz_ab_wday );
 @EXPORT_OK = qw( cz_date cz_month cz_wday cz_month_base cz_ab_wday );
 	
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 my @CZ_MONTH_BASE = qw( leden únor bøezen duben kvìten èerven èervenec
         srpen záøí øíjen listopad prosinec );
@@ -83,7 +83,7 @@ sub cz_date
         {
         my @t;
         if (@_) { @t = @_; } else { @t = localtime; }
-        return $t[3] . '. ' . cz_month($t[4]) . ' ' . ($t[5] + 1900);
+        return $t[3] . '. ' . cz_month($t[4] + 1) . ' ' . ($t[5] + 1900);
         }
 sub cz_wday
         {
