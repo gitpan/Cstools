@@ -1,6 +1,11 @@
 
 Revision history for Perl extension Cstools.
 
+3.4 Thu Oct 17 13:37:18 MET DST 2002
+
+	Added support for MIME encoding. It requires MIME::Words from
+	MIME-Tools, and fixes a few bugs in that code.
+
 3.3 Thu Jul  4 16:23:05 MET DST 2002
 
 	Cz::Cstocs (3.3): removed extra empty line from 1250.enc,

@@ -44,7 +44,7 @@ sub import {
 	Cz::Cstocs->export_to_level(1, '_stupidity_workaround', @data);
 } 
 
-$VERSION = '3.3';
+$VERSION = '3.4';
 
 # Debugging option
 $DEBUG = 0 unless defined $DEBUG;
@@ -106,6 +106,14 @@ sub load_encoding {
 	my $enc = lc shift;
 
 	return if defined $input_hashes{$enc};	# has already been loaded
+
+	if ($enc eq 'mime') {
+		eval 'use MIME::Words ()';
+		if ($@) {
+			die "Error loading encofing $enc: $@\n";
+		}
+		return;
+	}
 
 	my $file = "$cstocsdir/$enc.enc";
 	open FILE, $file or die "Error reading $file: $!\n";
@@ -356,41 +364,74 @@ sub new {
 	my $conv = {};
 
 	my ($is_one_by_one, $has_space) = (1, 0);
-	my $key;
-	for $key (keys %{$input_hashes{$inputenc}}) {
-		my $desc = $input_hashes{$inputenc}{$key};
-		my $output = $output_hashes{$outputenc}{$desc};
-		
-		if (not defined $output and $use_accent) {
-			# Doesn't have friend in output encoding
+
+	if ($outputenc ne 'mime') {
+		my $key;
+		for $key (keys %{$input_hashes{$inputenc}}) {
+			my $desc = $input_hashes{$inputenc}{$key};
+			my $output = $output_hashes{$outputenc}{$desc};
+			
+			if (not defined $output and $use_accent) {
+				# Doesn't have friend in output encoding
 
 
-			$output = eval {
-				lookup_accent($output_hashes{$outputenc},
-				\%accent, $accent{$desc}) if defined $accent{$desc};
-				};
-			if ($@) {
-				$errstr = "Error processing translitaration for $inputenc -> $outputenc for character $desc.\n";
-				return;
+				$output = eval {
+					lookup_accent($output_hashes{$outputenc},
+					\%accent, $accent{$desc}) if defined $accent{$desc};
+					};
+				if ($@) {
+					$errstr = "Error processing translitaration for $inputenc -> $outputenc for character $desc.\n";
+					return;
+				}
+
+				$output = undef if $one_by_one and defined $output
+					and length $key < length $output;
 			}
-
-			$output = undef if $one_by_one and defined $output
-				and length $key < length $output;
+			if (not defined $output and $use_fillstring) {
+				$output = $fillstring;
+			}
+			
+			next if (not defined $output
+				or ($inputenc ne 'utf8' and $key eq $output));
+			if (length $key != 1 or length $output != 1)
+				{ $is_one_by_one = 0; }
+			$conv->{$key} = $output;
 		}
-		if (not defined $output and $use_fillstring) {
-			$output = $fillstring;
-		}
-		
-		next if (not defined $output
-			or ($inputenc ne 'utf8' and $key eq $output));
-		if (length $key != 1 or length $output != 1)
-			{ $is_one_by_one = 0; }
-		$conv->{$key} = $output;
 	}
 
 	my $fntext = ' sub { my @converted = map { my $e = $_; if (defined $e) {';
 
-	if (not keys %$conv) {
+	if ($inputenc eq 'mime') {
+		$fntext .= qq!
+			\$e =~ s/=\\s*=/==/g;
+			\$e = join '', map {
+				my \$conv;
+				if (defined \$_->[1]) {
+					(defined(\$conv = new Cz::Cstocs \$_->[1], '$outputenc', %{ \\%opts }))
+					? \$conv->conv(\$_->[0])
+					: ()
+				} else {
+					\$_->[0]
+				}
+			} MIME::Words::decode_mimewords(\$e);
+			!;
+	} elsif ($outputenc eq 'mime') {
+		my %MIME_NAMES = (
+			il1 => 'ISO-8859-1',
+			il2 => 'ISO-8859-2',
+			utf8 => 'UTF-8',
+			1250 => 'Windows-1250',
+			1252 => 'Windows-1252',
+			);
+		my $charset = $MIME_NAMES{$inputenc};
+		if (not defined $charset) {
+			die "Couldn't find MIME name for encoding $inputenc\n";
+		}
+		$fntext .= qq!
+			\$e = MIME::Words::encode_mimewords(\$e, Charset => '$charset');
+			\$e =~ s/\\?=( +)=\\?.*?\\?Q\\?/'_' x length \$1/egi;
+			!;
+	} elsif (not keys %$conv) {
 		# do nothing;
 	} elsif ($is_one_by_one) {
 		my $src = join "", keys %$conv;
@@ -562,7 +603,7 @@ Jan "Yenya" Kasprzak has done the original Un*x implementation.
 
 =head1 VERSION
 
-3.3
+3.4
 
 =head1 SEE ALSO
 

@@ -2,7 +2,7 @@
 ###
 # Cz::Cstocs.pm
 
-BEGIN { $| = 1; print "1..27\n"; }
+BEGIN { $| = 1; print "1..29\n"; }
 END {print "not ok 1\n" unless $loaded_cstocs;}
 
 ###
@@ -251,3 +251,25 @@ print "ok 27\n";
 
 unlink $TSTFILE;
 unlink "$TSTFILE.bak";
+
+###
+
+print "Will test conversion from MIME to il2:\n";
+
+my $mimedata = <<'EOF';
+X-Hlavicka: UTF-8 =?utf-8?Q?=C4=8Desk=C3=BD?= text =?iso-8859-2?Q?+=EC=B9=E8=F8=BE=FD=E1=ED=E9?= =?iso-8859-2?Q?+=EC=B9=E8=F8=BE=FD=E1=ED=E9?= =?utf-8?Q?_=C4=8Desk=C3=BD?= =?iso-8859-2?Q?+=EC=B9=E8=F8=BE=FD=E1=ED=E9?=
+EOF
+
+my $mime_il2 = new Cz::Cstocs 'mime', 'il2';
+my $out = $mime_il2->conv($mimedata);
+if ($out ne "X-Hlavicka: UTF-8 èeský text +ì¹èø¾ýáíé+ì¹èø¾ýáíé èeský+ì¹èø¾ýáíé\n") {
+	print "not ";
+}
+print "ok 28\n";
+
+my $il2_mime = new Cz::Cstocs 'il2', 'MIME';
+my $outmime = &$il2_mime($out);
+if ($outmime ne "X-Hlavicka: UTF-8 =?ISO-8859-2?Q?=E8esk=FD?= text +=?ISO-8859-2?Q?=EC=B9=E8=F8=BE=FD=E1=ED=E9?=+=?ISO-8859-2?Q?=EC=B9=E8=F8=BE=FD=E1=ED=E9_=E8esk=FD?=+=?ISO-8859-2?Q?=EC=B9=E8=F8=BE=FD=E1=ED=E9?=\n") {
+	print "not ";
+}
+print "ok 29\n";
